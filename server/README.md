@@ -11,6 +11,27 @@ cp .env.example .env   # дараа нь .env-ээ бөглөнө
 npm run dev            # эсвэл npm start
 ```
 
+## Файлын бүтэц
+| Файл | Үүрэг |
+|------|-------|
+| `app.js` | Express app (listen-гүй) — routes, middleware |
+| `index.js` | **Vercel serverless entry** (app-ийг export) |
+| `server.js` | **Local dev entry** (DB холбож, порт сонсоно) |
+
+## Vercel deploy
+
+1. Кодоо GitHub-д push хийнэ
+2. [Vercel](https://vercel.com) → **New Project** → repo-гоо сонгоно
+3. **Root Directory** = `server` гэж заана (frontend биш!)
+4. **Environment Variables** хэсэгт `.env`-ийн утгуудыг нэмнэ:
+   - `MONGODB_URI`, `JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`
+   - ⚠️ `PORT` нэмэхгүй — Vercel өөрөө удирдана
+5. MongoDB Atlas → **Network Access** дээр `0.0.0.0/0` зөвшөөрсөн эсэхээ шалгана
+6. **Deploy** дарна
+
+Deploy хийсний дараа frontend-ийн `.env`-д `VITE_API_URL`-г Vercel-ийн өгсөн
+URL (жишээ нь `https://tsetsegly-api.vercel.app`) болгож солино.
+
 ## .env тохиргоо
 
 | Хувьсагч | Тайлбар |
