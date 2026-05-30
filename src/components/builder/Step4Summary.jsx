@@ -4,6 +4,7 @@ import { WRAPPINGS } from './Step2Wrapping'
 import { RIBBONS } from './Step3Ribbon'
 import { SHAPES, ShapeSVG } from './BouquetShapes'
 import { saveGift, giftUrl } from '../../lib/giftStore'
+import { createOrder, buildOrderPayload } from '../../lib/api'
 
 function fmt(n) {
   return '₮' + n.toLocaleString('mn-MN')
@@ -14,6 +15,8 @@ export default function Step4Summary({ order, onChange, onPrev }) {
   const [errors, setErrors] = useState({})
   const [giftId, setGiftId] = useState(null)
   const [copied, setCopied] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [offline, setOffline] = useState(false)
 
   const flowerTotal = FLOWERS.reduce((sum, f) => sum + (order.flowers[f.id] || 0) * f.price, 0)
   const wrappingItem = WRAPPINGS.find((w) => w.id === order.wrapping)
@@ -31,22 +34,37 @@ export default function Step4Summary({ order, onChange, onPrev }) {
     return e
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const e = validate()
     if (Object.keys(e).length) { setErrors(e); return }
-    // UUID үүсгэж захиалгыг хадгална
-    const id = saveGift({
-      flowers: order.flowers,
-      shape: order.shape,
-      wrapping: order.wrapping,
-      ribbon: order.ribbon,
-      name: order.name,
-      phone: order.phone,
-      total: grandTotal,
-      gift,
-    })
-    setGiftId(id)
-    setSubmitted(true)
+
+    setSaving(true)
+    setOffline(false)
+    const fullOrder = { ...order, total: grandTotal }
+
+    try {
+      // Backend-д шууд хадгална
+      const { id } = await createOrder(buildOrderPayload(fullOrder))
+      setGiftId(id)
+      setSubmitted(true)
+    } catch {
+      // Backend холбогдоогүй бол localStorage-д хадгална (offline fallback)
+      const id = saveGift({
+        flowers: order.flowers,
+        shape: order.shape,
+        wrapping: order.wrapping,
+        ribbon: order.ribbon,
+        name: order.name,
+        phone: order.phone,
+        total: grandTotal,
+        gift,
+      })
+      setGiftId(id)
+      setOffline(true)
+      setSubmitted(true)
+    } finally {
+      setSaving(false)
+    }
   }
 
   async function copyLink() {
@@ -79,6 +97,12 @@ export default function Step4Summary({ order, onChange, onPrev }) {
             <span className="text-gold-dark font-medium">{order.name}</span>, таны захиалгыг хүлээн авлаа.<br />
             Удахгүй <span className="text-gold-dark font-medium">{order.phone}</span> дугаарт холбогдоно.
           </p>
+
+          {offline && (
+            <p className="font-cormorant text-sm text-amber-600/70 mt-4 max-w-xs mx-auto">
+              ⚠ Сервертэй холбогдсонгүй — захиалга энэ төхөөрөмжид түр хадгалагдлаа.
+            </p>
+          )}
 
           {/* Gift link card */}
           <div className="mt-8 rounded-2xl border border-gold-light/80 overflow-hidden text-left max-w-md mx-auto"
@@ -291,16 +315,19 @@ export default function Step4Summary({ order, onChange, onPrev }) {
         </button>
         <button
           onClick={handleSubmit}
-          className="group relative px-12 py-4 font-cormorant text-base tracking-widest uppercase overflow-hidden w-full sm:w-auto"
+          disabled={saving}
+          className={`group relative px-12 py-4 font-cormorant text-base tracking-widest uppercase overflow-hidden w-full sm:w-auto ${saving ? 'opacity-60 cursor-wait' : ''}`}
         >
           <span className="absolute inset-0 transition-opacity duration-300"
             style={{ background: 'linear-gradient(135deg, #F4EBD3, #C9A961, #8A6E2F)' }}
           />
-          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            style={{ background: 'linear-gradient(135deg, #8A6E2F, #C9A961, #F4EBD3)' }}
-          />
+          {!saving && (
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              style={{ background: 'linear-gradient(135deg, #8A6E2F, #C9A961, #F4EBD3)' }}
+            />
+          )}
           <span className="relative text-ink font-medium flex items-center justify-center gap-2">
-            🌸 Захиалга өгөх
+            {saving ? 'Хадгалж байна…' : '🌸 Захиалга өгөх'}
           </span>
         </button>
       </div>

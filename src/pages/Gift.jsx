@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { loadGift } from '../lib/giftStore'
+import { fetchGift, normalizeGift } from '../lib/api'
 import { parseMediaUrl } from '../lib/mediaEmbed'
 import { getLetterFont } from '../lib/letterFonts'
-import { FLOWERS } from '../components/builder/Step1Flowers'
 import { WRAPPINGS } from '../components/builder/Step2Wrapping'
 import { SHAPES, ShapeSVG } from '../components/builder/BouquetShapes'
 import { RIBBONS } from '../components/builder/Step3Ribbon'
@@ -22,13 +22,37 @@ function GoldOrb({ className }) {
 
 export default function Gift() {
   const { id } = useParams()
-  // localStorage унших нь синхрон тул render үед шууд тооцоолно
-  const data = useMemo(() => loadGift(id), [id])
+  const [data, setData] = useState(undefined) // undefined=loading, null=not found
   const [opened, setOpened] = useState(false)
   const [confetti, setConfetti] = useState(false)
 
+  // Эхлээд backend-аас, амжилтгүй бол localStorage-аас татна
+  useEffect(() => {
+    let active = true
+    ;(async () => {
+      let raw
+      try {
+        raw = await fetchGift(id)
+      } catch {
+        raw = null
+      }
+      if (!raw) raw = loadGift(id)
+      if (active) setData(normalizeGift(raw))
+    })()
+    return () => { active = false }
+  }, [id])
+
+  /* ── Loading ── */
+  if (data === undefined) {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <p className="font-cormorant text-ink/40 text-lg animate-pulse">Бэлэг уншиж байна…</p>
+      </div>
+    )
+  }
+
   /* ── Not found ── */
-  if (!data) {
+  if (data === null) {
     return (
       <div className="min-h-screen bg-cream flex flex-col items-center justify-center px-6 text-center">
         <div className="text-5xl mb-4">🥀</div>
@@ -46,12 +70,11 @@ export default function Gift() {
     )
   }
 
-  const gift = data.gift || {}
-  const media = gift.musicUrl ? parseMediaUrl(gift.musicUrl) : null
-  const font = getLetterFont(gift.letterFont)
-  const photos = gift.photos || []
+  const media = data.music ? parseMediaUrl(data.music) : null
+  const font = getLetterFont(data.letterFont)
+  const photos = data.photos || []
 
-  const flowerList = FLOWERS.filter((f) => data.flowers?.[f.id])
+  const flowerList = data.flowers || []
   const shapeItem = SHAPES.find((s) => s.id === data.shape)
   const wrapItem = WRAPPINGS.find((w) => w.id === data.wrapping)
   const ribbonItem = RIBBONS.find((r) => r.id === data.ribbon)
@@ -100,7 +123,7 @@ export default function Gift() {
           </button>
 
           <h1 className="font-playfair italic text-3xl md:text-4xl text-ink mb-2">
-            {gift.recipientName ? `${gift.recipientName}, ` : ''}танд бэлэг ирлээ
+            {data.recipientName ? `${data.recipientName}, ` : ''}танд бэлэг ирлээ
           </h1>
           <p className="font-cormorant text-lg text-ink/55 mb-8">
             ✉ Нээхийн тулд дарна уу
@@ -139,14 +162,14 @@ export default function Gift() {
           </p>
           <div className="text-4xl mb-3">💐</div>
           <h1 className="font-playfair italic text-4xl md:text-5xl text-ink leading-tight">
-            {gift.recipientName ? `Хайрт ${gift.recipientName}` : 'Танд зориулсан'}
+            {data.recipientName ? `Хайрт ${data.recipientName}` : 'Танд зориулсан'}
           </h1>
           <div className="w-16 h-px mx-auto mt-5"
             style={{ background: 'linear-gradient(90deg, transparent, #C9A961, transparent)' }} />
         </div>
 
         {/* Letter */}
-        {gift.letterText && (
+        {data.letterText && (
           <div className="w-full reveal" style={{ animationDelay: '0.3s' }}>
             <div className="rounded-3xl border border-gold-light/70 px-7 py-9 shadow-sm"
               style={{ background: 'linear-gradient(160deg, #FFFDF8, #FBF6EC)' }}>
@@ -155,15 +178,15 @@ export default function Gift() {
                 className="text-ink/85 text-center leading-relaxed whitespace-pre-wrap"
                 style={{
                   ...font.style,
-                  fontSize: gift.letterFont === 'fun' ? '1.75rem' : '1.35rem',
-                  lineHeight: gift.letterFont === 'fun' ? '1.5' : '1.7',
+                  fontSize: data.letterFont === 'fun' ? '1.75rem' : '1.35rem',
+                  lineHeight: data.letterFont === 'fun' ? '1.5' : '1.7',
                 }}
               >
-                {gift.letterText}
+                {data.letterText}
               </p>
-              {data.name && (
+              {data.senderName && (
                 <p className="font-cormorant text-right text-ink/45 mt-6 text-base">
-                  — {data.name}
+                  — {data.senderName}
                 </p>
               )}
             </div>
@@ -231,7 +254,7 @@ export default function Gift() {
                     {flowerList.map((f) => (
                       <span key={f.id} className="text-sm font-cormorant px-2.5 py-1 rounded-full bg-gold-light/40 text-ink/75 flex items-center gap-1">
                         <span>{f.emoji}</span>{f.name}
-                        {data.flowers[f.id] > 1 && <span className="text-ink/40">×{data.flowers[f.id]}</span>}
+                        {f.qty > 1 && <span className="text-ink/40">×{f.qty}</span>}
                       </span>
                     ))}
                   </div>
