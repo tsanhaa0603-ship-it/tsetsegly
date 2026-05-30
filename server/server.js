@@ -13,9 +13,10 @@ app.use(cors())                          // React frontend-тэй холбогд
 app.use(express.json({ limit: '15mb' })) // base64 зургуудыг багтаах
 
 // ── Health check ──
-app.get('/', (req, res) => {
+const health = (req, res) =>
   res.json({ ok: true, service: 'Tsetsegly API', time: new Date().toISOString() })
-})
+app.get('/', health)
+app.get('/api/health', health)
 
 // ── Routes ──
 app.use('/api/auth', authRoutes)
