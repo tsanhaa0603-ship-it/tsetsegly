@@ -47,6 +47,73 @@ export async function createOrder(payload) {
   return res.json()
 }
 
+/* ─────────────────────────────────────────────
+   Admin (JWT)
+───────────────────────────────────────────── */
+const TOKEN_KEY = 'tsetsegly_admin_token'
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY)
+}
+export function setToken(t) {
+  localStorage.setItem(TOKEN_KEY, t)
+}
+export function clearToken() {
+  localStorage.removeItem(TOKEN_KEY)
+}
+function authHeader() {
+  const t = getToken()
+  return t ? { Authorization: `Bearer ${t}` } : {}
+}
+
+/* 401 үед дахин нэвтрэх шаардлагатайг илэрхийлэх алдаа */
+export class AuthError extends Error {
+  constructor(message = 'Нэвтрэх хугацаа дууссан') {
+    super(message)
+    this.code = 'AUTH'
+  }
+}
+
+/* Admin нэвтрэх — { token, username } буцаана */
+export async function adminLogin(password) {
+  const res = await fetch(`${API}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: 'admin', password }),
+  })
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}))
+    throw new Error(e.error || 'Нэвтрэхэд алдаа гарлаа')
+  }
+  return res.json()
+}
+
+/* Бүх захиалга татах (admin) */
+export async function fetchOrders() {
+  const res = await fetch(`${API}/api/orders`, { headers: authHeader() })
+  if (res.status === 401) {
+    clearToken()
+    throw new AuthError()
+  }
+  if (!res.ok) throw new Error('Захиалга татахад алдаа гарлаа')
+  return res.json()
+}
+
+/* Захиалгын статус шинэчлэх (admin) */
+export async function updateOrderStatus(id, status) {
+  const res = await fetch(`${API}/api/orders/${id}/status`, {
+    method: 'PATCH',
+    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  })
+  if (res.status === 401) {
+    clearToken()
+    throw new AuthError()
+  }
+  if (!res.ok) throw new Error('Статус шинэчлэхэд алдаа гарлаа')
+  return res.json()
+}
+
 /* NFC бэлгийн мэдээлэл татах — олдохгүй бол null */
 export async function fetchGift(id) {
   const res = await fetch(`${API}/api/gift/${id}`)
