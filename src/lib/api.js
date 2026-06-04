@@ -2,22 +2,29 @@
    Backend API холболт
    VITE_API_URL .env-д тохируулагдана.
 ───────────────────────────────────────────── */
-import { FLOWERS } from '../components/builder/Step1Flowers'
+import { DEFAULT_CATALOG, flattenCatalog } from './flowers'
 
 const API = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '')
 
-/* Frontend order → backend payload руу хувиргах */
-export function buildOrderPayload(order) {
+/* Frontend order → backend payload руу хувиргах.
+   order.flowers нь { 'flowerKey:colorKey': qty } хэлбэртэй. */
+export function buildOrderPayload(order, catalog = DEFAULT_CATALOG) {
   const g = order.gift || {}
-  const flowers = FLOWERS
-    .filter((f) => order.flowers?.[f.id])
-    .map((f) => ({
-      id: f.id,
-      name: f.name,
-      emoji: f.emoji,
-      price: f.price,
-      qty: order.flowers[f.id],
-    }))
+  const flat = flattenCatalog(catalog)
+  const flowers = Object.entries(order.flowers || {})
+    .filter(([, qty]) => qty > 0)
+    .map(([variant, qty]) => {
+      const m = flat[variant] || {}
+      return {
+        id: variant,
+        name: m.name || variant,
+        emoji: m.emoji || '🌸',
+        color: m.colorKey || '',
+        hex: m.hex || '',
+        price: m.price || 0,
+        qty,
+      }
+    })
 
   return {
     flowers,
@@ -114,6 +121,34 @@ export async function updateOrderStatus(id, status) {
   return res.json()
 }
 
+/* ── Цэцгийн каталог ── */
+/* GET /api/flowers — public каталог. Амжилтгүй бол DEFAULT_CATALOG. */
+export async function fetchFlowers() {
+  try {
+    const res = await fetch(`${API}/api/flowers`)
+    if (!res.ok) return DEFAULT_CATALOG
+    const data = await res.json()
+    return Array.isArray(data) && data.length ? data : DEFAULT_CATALOG
+  } catch {
+    return DEFAULT_CATALOG
+  }
+}
+
+/* PATCH /api/flowers/:key — admin: цэцгийн өнгүүд шинэчлэх */
+export async function updateFlowerType(key, payload) {
+  const res = await fetch(`${API}/api/flowers/${key}`, {
+    method: 'PATCH',
+    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (res.status === 401) {
+    clearToken()
+    throw new AuthError()
+  }
+  if (!res.ok) throw new Error('Шинэчлэхэд алдаа гарлаа')
+  return res.json()
+}
+
 /* NFC бэлгийн мэдээлэл татах — олдохгүй бол null */
 export async function fetchGift(id) {
   const res = await fetch(`${API}/api/gift/${id}`)
@@ -131,9 +166,13 @@ export function normalizeGift(raw) {
   if (Array.isArray(raw.flowers)) {
     flowers = raw.flowers
   } else if (raw.flowers && typeof raw.flowers === 'object') {
-    flowers = FLOWERS
-      .filter((f) => raw.flowers[f.id])
-      .map((f) => ({ id: f.id, name: f.name, emoji: f.emoji, price: f.price, qty: raw.flowers[f.id] }))
+    const flat = flattenCatalog(DEFAULT_CATALOG)
+    flowers = Object.entries(raw.flowers)
+      .filter(([, qty]) => qty > 0)
+      .map(([variant, qty]) => {
+        const m = flat[variant] || {}
+        return { id: variant, name: m.name || variant, emoji: m.emoji || '🌸', hex: m.hex || '', qty }
+      })
   }
 
   return {

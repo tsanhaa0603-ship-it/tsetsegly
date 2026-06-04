@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { fetchOrders, updateOrderStatus, clearToken, AuthError } from '../../lib/api'
 import { STATUSES, getStatus, formatTugrik, formatDate, isToday } from '../../lib/orderStatus'
 import OrderDetailModal from '../../components/admin/OrderDetailModal'
@@ -116,12 +116,20 @@ export default function AdminDashboard() {
             }}>Tsetsegly</span>
             <span className="font-cormorant tracking-[0.3em] text-xs uppercase text-cream/40">Админ</span>
           </div>
-          <button
-            onClick={logout}
-            className="font-cormorant text-sm tracking-widest uppercase text-cream/50 hover:text-cream border border-gold-mid/25 hover:border-gold-mid/50 rounded-lg px-4 py-1.5 transition-colors"
-          >
-            Гарах
-          </button>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/admin/flowers"
+              className="font-cormorant text-sm tracking-widest uppercase text-cream/50 hover:text-cream transition-colors"
+            >
+              🌸 Каталог
+            </Link>
+            <button
+              onClick={logout}
+              className="font-cormorant text-sm tracking-widest uppercase text-cream/50 hover:text-cream border border-gold-mid/25 hover:border-gold-mid/50 rounded-lg px-4 py-1.5 transition-colors"
+            >
+              Гарах
+            </button>
+          </div>
         </div>
       </header>
 

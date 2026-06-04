@@ -1,14 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import StepIndicator from '../components/builder/StepIndicator'
 import Step1Flowers from '../components/builder/Step1Flowers'
 import Step2Wrapping from '../components/builder/Step2Wrapping'
 import Step3Ribbon from '../components/builder/Step3Ribbon'
 import Step4Summary from '../components/builder/Step4Summary'
+import { fetchFlowers } from '../lib/api'
+import { DEFAULT_CATALOG } from '../lib/flowers'
 
 const TOTAL_STEPS = 4
 
 export default function Build() {
   const [step, setStep] = useState(1)
+  const [catalog, setCatalog] = useState(DEFAULT_CATALOG)
+
+  // Цэцгийн каталогийг backend-аас татна (амжилтгүй бол default)
+  useEffect(() => {
+    let active = true
+    fetchFlowers().then((c) => { if (active) setCatalog(c) })
+    return () => { active = false }
+  }, [])
   const [order, setOrder] = useState({
     flowers: {},      // { id: quantity }
     shape: null,      // bouquet shape id
@@ -53,6 +63,7 @@ export default function Build() {
         <div className="mt-8">
           {step === 1 && (
             <Step1Flowers
+              catalog={catalog}
               selected={order.flowers}
               onChange={(flowers) => setOrder((o) => ({ ...o, flowers }))}
               onNext={next}
@@ -81,6 +92,7 @@ export default function Build() {
           {step === 4 && (
             <Step4Summary
               order={order}
+              catalog={catalog}
               onChange={(fields) => setOrder((o) => ({ ...o, ...fields }))}
               onPrev={prev}
             />

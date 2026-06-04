@@ -4,6 +4,7 @@ import connectDB from './config/db.js'
 import authRoutes from './routes/auth.js'
 import orderRoutes from './routes/orders.js'
 import giftRoutes from './routes/gift.js'
+import flowerRoutes from './routes/flowers.js'
 
 const app = express()
 
@@ -32,6 +33,7 @@ app.get('/api/health', health)
 app.use('/api/auth', authRoutes)
 app.use('/api/orders', orderRoutes)
 app.use('/api/gift', giftRoutes)
+app.use('/api/flowers', flowerRoutes)
 
 // ── 404 ──
 app.use((req, res) => res.status(404).json({ error: 'Хаяг олдсонгүй' }))

@@ -1,16 +1,16 @@
 import { useState } from 'react'
-import { FLOWERS } from './Step1Flowers'
 import { WRAPPINGS } from './Step2Wrapping'
 import { RIBBONS } from './Step3Ribbon'
 import { SHAPES, ShapeSVG } from './BouquetShapes'
 import { saveGift, giftUrl } from '../../lib/giftStore'
 import { createOrder, buildOrderPayload } from '../../lib/api'
+import { flattenCatalog, calcTotal } from '../../lib/flowers'
 
 function fmt(n) {
   return '₮' + n.toLocaleString('mn-MN')
 }
 
-export default function Step4Summary({ order, onChange, onPrev }) {
+export default function Step4Summary({ order, catalog, onChange, onPrev }) {
   const [submitted, setSubmitted] = useState(false)
   const [errors, setErrors] = useState({})
   const [giftId, setGiftId] = useState(null)
@@ -18,7 +18,11 @@ export default function Step4Summary({ order, onChange, onPrev }) {
   const [saving, setSaving] = useState(false)
   const [offline, setOffline] = useState(false)
 
-  const flowerTotal = FLOWERS.reduce((sum, f) => sum + (order.flowers[f.id] || 0) * f.price, 0)
+  const flat = flattenCatalog(catalog)
+  const selectedFlowers = Object.entries(order.flowers || {})
+    .filter(([, qty]) => qty > 0)
+    .map(([vKey, qty]) => ({ ...(flat[vKey] || { name: vKey, emoji: '🌸', price: 0 }), qty, vKey }))
+  const flowerTotal = calcTotal(order.flowers, catalog)
   const wrappingItem = WRAPPINGS.find((w) => w.id === order.wrapping)
   const ribbonItem = RIBBONS.find((r) => r.id === order.ribbon)
   const wrappingCost = wrappingItem?.price || 0
@@ -44,7 +48,7 @@ export default function Step4Summary({ order, onChange, onPrev }) {
 
     try {
       // Backend-д шууд хадгална
-      const { id } = await createOrder(buildOrderPayload(fullOrder))
+      const { id } = await createOrder(buildOrderPayload(fullOrder, catalog))
       setGiftId(id)
       setSubmitted(true)
     } catch {
@@ -165,14 +169,18 @@ export default function Step4Summary({ order, onChange, onPrev }) {
         <div className="px-5 py-4 border-b border-gold-light/60">
           <p className="font-cormorant tracking-widest text-xs uppercase text-ink/40 mb-3">Цэцгүүд</p>
           <div className="flex flex-col gap-2">
-            {FLOWERS.filter((f) => order.flowers[f.id]).map((f) => (
-              <div key={f.id} className="flex items-center justify-between">
+            {selectedFlowers.map((f) => (
+              <div key={f.vKey} className="flex items-center justify-between">
                 <span className="font-cormorant text-base text-ink flex items-center gap-2">
-                  <span>{f.emoji}</span> {f.name}
-                  <span className="text-ink/40">× {order.flowers[f.id]}</span>
+                  <span>{f.emoji}</span>
+                  {f.hex && (
+                    <span className="w-3 h-3 rounded-full inline-block" style={{ background: f.hex, border: /^#?(F|E)/i.test(f.hex) ? '1px solid rgba(0,0,0,0.12)' : 'none' }} />
+                  )}
+                  {f.name}
+                  <span className="text-ink/40">× {f.qty}</span>
                 </span>
                 <span className="font-cormorant text-base text-gold-dark">
-                  {fmt(f.price * order.flowers[f.id])}
+                  {fmt(f.price * f.qty)}
                 </span>
               </div>
             ))}

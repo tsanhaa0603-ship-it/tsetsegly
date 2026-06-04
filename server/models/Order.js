@@ -5,6 +5,8 @@ const FlowerSchema = new mongoose.Schema(
     id: String,
     name: String,
     emoji: String,
+    color: String,
+    hex: String,
     price: Number,
     qty: Number,
   },
