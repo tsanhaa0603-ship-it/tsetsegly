@@ -3,17 +3,11 @@ import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Build from './pages/Build'
 import Gift from './pages/Gift'
+import About from './pages/About'
+import Contact from './pages/Contact'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import { getToken } from './lib/api'
-
-function Placeholder({ title }) {
-  return (
-    <main className="min-h-screen flex items-center justify-center pt-16">
-      <p className="font-playfair italic text-3xl gold-text">{title}</p>
-    </main>
-  )
-}
 
 /* Нэвтрээгүй бол /admin/login руу чиглүүлнэ */
 function RequireAuth({ children }) {
@@ -36,8 +30,8 @@ export default function App() {
         <Route path="/gift/:id" element={<Gift />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<RequireAuth><AdminDashboard /></RequireAuth>} />
-        <Route path="/about" element={<Placeholder title="Тухай" />} />
-        <Route path="/contact" element={<Placeholder title="Холбоо барих" />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </>
   )
