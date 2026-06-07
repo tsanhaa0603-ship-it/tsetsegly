@@ -21,6 +21,7 @@ export function buildOrderPayload(order, catalog = DEFAULT_CATALOG) {
         emoji: m.emoji || '🌸',
         color: m.colorKey || '',
         hex: m.hex || '',
+        image: m.image || '',
         price: m.price || 0,
         qty,
       }
@@ -171,7 +172,7 @@ export function normalizeGift(raw) {
       .filter(([, qty]) => qty > 0)
       .map(([variant, qty]) => {
         const m = flat[variant] || {}
-        return { id: variant, name: m.name || variant, emoji: m.emoji || '🌸', hex: m.hex || '', qty }
+        return { id: variant, name: m.name || variant, emoji: m.emoji || '🌸', hex: m.hex || '', image: m.image || '', qty }
       })
   }
 

@@ -5,6 +5,7 @@ const ColorSchema = new mongoose.Schema(
     key: String,
     name: String,
     hex: String,
+    image: { type: String, default: '' },
     price: { type: Number, default: 0 },
   },
   { _id: false }

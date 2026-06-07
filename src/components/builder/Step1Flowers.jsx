@@ -82,7 +82,14 @@ export default function Step1Flowers({ catalog, selected, onChange, onNext }) {
                   {cnt}
                 </span>
               )}
-              <span className="text-3xl leading-none select-none">{f.emoji}</span>
+              {(() => {
+                const img = f.colors?.find((c) => c.image)?.image
+                return img ? (
+                  <img src={img} alt={f.name} className="w-10 h-10 object-contain select-none" loading="lazy" />
+                ) : (
+                  <span className="text-3xl leading-none select-none">{f.emoji}</span>
+                )
+              })()}
               <span className={`font-playfair text-xs mt-1.5 text-center leading-tight ${isActive ? 'text-ink' : 'text-ink/60'}`}>
                 {f.name}
               </span>
@@ -113,14 +120,18 @@ export default function Step1Flowers({ catalog, selected, onChange, onNext }) {
                     picked ? 'border-gold-mid bg-gold-light/20' : 'border-gold-light/50'
                   }`}
                 >
-                  {/* Color circle */}
-                  <span
-                    className="flex-shrink-0 w-7 h-7 rounded-full shadow-sm"
-                    style={{
-                      background: c.hex,
-                      border: needsBorder(c.hex) ? '1px solid rgba(0,0,0,0.12)' : 'none',
-                    }}
-                  />
+                  {/* Color image эсвэл тойрог */}
+                  {c.image ? (
+                    <img src={c.image} alt={c.name} className="flex-shrink-0 w-10 h-10 rounded-lg object-cover shadow-sm" loading="lazy" />
+                  ) : (
+                    <span
+                      className="flex-shrink-0 w-7 h-7 rounded-full shadow-sm"
+                      style={{
+                        background: c.hex,
+                        border: needsBorder(c.hex) ? '1px solid rgba(0,0,0,0.12)' : 'none',
+                      }}
+                    />
+                  )}
                   {/* Name + price */}
                   <div className="flex-1 min-w-0">
                     <p className="font-cormorant text-base text-ink leading-tight">{c.name}</p>
@@ -163,7 +174,11 @@ export default function Step1Flowers({ catalog, selected, onChange, onNext }) {
               if (!m) return null
               return (
                 <span key={vKey} className="font-cormorant text-sm px-2.5 py-1 rounded-full bg-white/60 border border-gold-light/70 text-ink/75 flex items-center gap-1.5">
-                  <span className="w-3 h-3 rounded-full" style={{ background: m.hex, border: needsBorder(m.hex) ? '1px solid rgba(0,0,0,0.12)' : 'none' }} />
+                  {m.image ? (
+                    <img src={m.image} alt={m.name} className="w-4 h-4 rounded-full object-cover" />
+                  ) : (
+                    <span className="w-3 h-3 rounded-full" style={{ background: m.hex, border: needsBorder(m.hex) ? '1px solid rgba(0,0,0,0.12)' : 'none' }} />
+                  )}
                   {m.name} <span className="text-ink/40">×{qty}</span>
                 </span>
               )

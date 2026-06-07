@@ -172,9 +172,10 @@ export default function Step4Summary({ order, catalog, onChange, onPrev }) {
             {selectedFlowers.map((f) => (
               <div key={f.vKey} className="flex items-center justify-between">
                 <span className="font-cormorant text-base text-ink flex items-center gap-2">
-                  <span>{f.emoji}</span>
-                  {f.hex && (
-                    <span className="w-3 h-3 rounded-full inline-block" style={{ background: f.hex, border: /^#?(F|E)/i.test(f.hex) ? '1px solid rgba(0,0,0,0.12)' : 'none' }} />
+                  {f.image ? (
+                    <img src={f.image} alt={f.name} className="w-6 h-6 rounded-md object-cover" />
+                  ) : (
+                    <span>{f.emoji}</span>
                   )}
                   {f.name}
                   <span className="text-ink/40">× {f.qty}</span>

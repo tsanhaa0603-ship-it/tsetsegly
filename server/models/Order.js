@@ -7,6 +7,7 @@ const FlowerSchema = new mongoose.Schema(
     emoji: String,
     color: String,
     hex: String,
+    image: String,
     price: Number,
     qty: Number,
   },

@@ -39,6 +39,7 @@ router.patch('/:key', auth, async (req, res) => {
         key: c.key,
         name: c.name,
         hex: c.hex || '#C9A961',
+        image: c.image || '',
         price: Number(c.price) || 0,
       }))
     }

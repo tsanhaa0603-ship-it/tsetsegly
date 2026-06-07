@@ -252,8 +252,13 @@ export default function Gift() {
                 {flowerList.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-3">
                     {flowerList.map((f) => (
-                      <span key={f.id} className="text-sm font-cormorant px-2.5 py-1 rounded-full bg-gold-light/40 text-ink/75 flex items-center gap-1">
-                        <span>{f.emoji}</span>{f.name}
+                      <span key={f.id} className="text-sm font-cormorant px-2.5 py-1 rounded-full bg-gold-light/40 text-ink/75 flex items-center gap-1.5">
+                        {f.image ? (
+                          <img src={f.image} alt={f.name} className="w-4 h-4 rounded-full object-cover" />
+                        ) : (
+                          <span>{f.emoji}</span>
+                        )}
+                        {f.name}
                         {f.qty > 1 && <span className="text-ink/40">×{f.qty}</span>}
                       </span>
                     ))}
