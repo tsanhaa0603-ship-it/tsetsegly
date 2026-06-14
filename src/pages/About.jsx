@@ -10,15 +10,16 @@ function GoldOrb({ className }) {
 }
 
 const VALUES = [
-  { icon: '🌸', title: 'Гар хийц', desc: 'Захиалга бүрт өөр мэдрэмж. Бид баглаа бүрийг гараараа, анхааралтайгаар бүтээнэ.' },
-  { icon: '💝', title: 'Мэдрэмж', desc: 'Таны төсөөллийг бодитоор. Өнгө, цэцэг, хэлбэр — бүгдийг та өөрөө сонгоно.' },
-  { icon: '✨', title: 'NFC технологи', desc: 'Мэдрэмжээ илэрхийл. Баглаандаа захидал, дуу, зураг шингээж дижитал бэлэг үлдээ.' },
+  { icon: '🌸', title: 'Гар хийц', desc: 'Цэцэг бүрийг гар аргаар, таны захиалгаар бүтээнэ' },
+  { icon: '💝', title: 'Мэдрэмжтэй', desc: 'Таны түүхийг цэцгийн баглаагаар илэрхийлнэ' },
+  { icon: '✨', title: 'NFC технологи', desc: 'Баглаанд NFC chip суулгаж мэндчилгээ, дуу, зураг хавсаргах боломжтой' },
 ]
 
-const FEATURES = [
-  { label: 'Улаанбаатар хот дахь online цэцгийн дэлгүүр' },
-  { label: 'Захиал — бид бүтээнэ (made-to-order)' },
-  { label: 'NFC chip-тэй ухаалаг баглаа' },
+const STATS = [
+  { value: '58+', label: 'цэцгийн зүйл' },
+  { value: '15+', label: 'ангилал' },
+  { value: '100%', label: 'гар хийц' },
+  { value: 'NFC', label: 'технологитой' },
 ]
 
 export default function About() {
@@ -39,9 +40,8 @@ export default function About() {
           <div className="w-16 h-px mx-auto my-6"
             style={{ background: 'linear-gradient(90deg, transparent, #C9A961, transparent)' }} />
           <p className="font-cormorant text-xl md:text-2xl text-ink/70 leading-relaxed max-w-2xl mx-auto">
-            Tsetsegly бол гар хийцийн цэцгийн баглааны студи.
-            Бид бэлэн баглаа зардаггүй — таны мэдрэмж, түүх, өнгийг сонсож,
-            <span className="italic"> made-to-order</span> зарчмаар тус бүрд нь зориулж бүтээдэг.
+            Tsetsegly бол Улаанбаатар хотод үйл ажиллагаа явуулдаг made-to-order
+            цэцгийн дэлгүүр. Бид таны мэдрэмж, өнгө, түүхийг цэцгээр илэрхийлнэ.
           </p>
         </div>
       </section>
@@ -68,23 +68,25 @@ export default function About() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Бидний онцлог — 2 багана */}
       <section className="px-6 py-12">
-        <div className="max-w-3xl mx-auto rounded-3xl border border-gold-light/70 px-8 py-10"
+        <div className="max-w-5xl mx-auto rounded-3xl border border-gold-light/70 overflow-hidden grid md:grid-cols-2"
           style={{ background: 'linear-gradient(160deg, #FFFDF8, #FBF6EC)' }}>
-          <h2 className="font-playfair italic text-3xl text-ink text-center mb-8">
-            Бидний онцлог
-          </h2>
-          <div className="flex flex-col gap-5 max-w-xl mx-auto">
-            {FEATURES.map((f, i) => (
-              <div key={i} className="flex items-center gap-4">
-                <span
-                  className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-cream font-playfair"
-                  style={{ background: 'linear-gradient(135deg, #C9A961, #8A6E2F)' }}
-                >
-                  {i + 1}
-                </span>
-                <p className="font-cormorant text-lg text-ink/75">{f.label}</p>
+          {/* Зүүн тал — текст */}
+          <div className="p-8 md:p-10 flex flex-col justify-center">
+            <h2 className="font-playfair italic text-3xl text-ink mb-5">Бидний онцлог</h2>
+            <p className="font-cormorant text-lg text-ink/70 leading-relaxed">
+              Бид 2024 оноос хойш Улаанбаатарт үйл ажиллагаагаа явуулж байна.
+              Made-to-order гэдэг нь таны захиалгыг хүлээн авсны дараа л цэцгийг
+              бэлтгэнэ гэсэн үг. 15 гаруй төрлийн, 58 зүйлийн цэцэгтэй.
+            </p>
+          </div>
+          {/* Баруун тал — статистик */}
+          <div className="p-8 md:p-10 grid grid-cols-2 gap-5 border-t md:border-t-0 md:border-l border-gold-light/60">
+            {STATS.map((s) => (
+              <div key={s.label} className="text-center py-4">
+                <p className="font-playfair text-4xl md:text-5xl gold-text leading-none">{s.value}</p>
+                <p className="font-cormorant text-base text-ink/55 mt-2">{s.label}</p>
               </div>
             ))}
           </div>

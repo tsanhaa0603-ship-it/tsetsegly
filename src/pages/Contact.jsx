@@ -11,13 +11,14 @@ function GoldOrb({ className }) {
 
 const CONTACTS = [
   { icon: '📞', label: 'Утас', value: '8844 4310', href: 'tel:88444310' },
-  { icon: '✉', label: 'Имэйл', value: 'tsanhaa0603@gmail.com', href: 'mailto:tsanhaa0603@gmail.com' },
-  { icon: '📍', label: 'Байршил', value: 'Улаанбаатар, Монгол', href: null },
+  { icon: '📧', label: 'Имэйл', value: 'tsanhaa0603@gmail.com', href: 'mailto:tsanhaa0603@gmail.com' },
+  { icon: '📍', label: 'Байршил', value: 'Улаанбаатар хот', href: null },
+  { icon: '🕐', label: 'Ажлын цаг', value: '10:00 - 20:00', href: null },
 ]
 
 const SOCIALS = [
-  { label: 'Instagram', href: '#' },
-  { label: 'Facebook', href: '#' },
+  { label: 'Instagram', handle: '@tsetsegly', href: 'https://www.instagram.com/tsetsegly.shop?igsh=aWdiN3pmdWVlMHUy&utm_source=qr' },
+  { label: 'Facebook', handle: 'Tsetsegly', href: 'https://www.facebook.com/people/Tsetsegly-flower-shop/61578490586768/' },
 ]
 
 export default function Contact() {
@@ -63,54 +64,57 @@ export default function Contact() {
 
       <section className="px-6 pb-20">
         <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
-          {/* Contact info */}
+          {/* Зүүн тал — мэдээлэл + сошиал */}
           <div className="flex flex-col gap-4">
-            {CONTACTS.map((c) => {
-              const inner = (
-                <div className="flex items-center gap-4 rounded-2xl border border-gold-light/70 px-6 py-5 transition-colors hover:border-gold-mid/60"
-                  style={{ background: 'linear-gradient(160deg, #FFFDF8, #FAF7F2)' }}>
-                  <span className="text-2xl">{c.icon}</span>
-                  <div>
-                    <p className="font-cormorant tracking-widest text-xs uppercase text-ink/40">{c.label}</p>
-                    <p className="font-cormorant text-lg text-ink">{c.value}</p>
+            {/* Холбоо барих карт (2x2) */}
+            <div className="grid grid-cols-2 gap-3">
+              {CONTACTS.map((c) => {
+                const inner = (
+                  <div className="h-full flex flex-col gap-1 rounded-2xl border border-gold-light/70 px-5 py-4 transition-colors hover:border-gold-mid/60"
+                    style={{ background: 'linear-gradient(160deg, #FFFDF8, #FAF7F2)' }}>
+                    <span className="text-2xl">{c.icon}</span>
+                    <p className="font-cormorant tracking-widest text-xs uppercase text-ink/40 mt-1">{c.label}</p>
+                    <p className="font-cormorant text-base text-ink leading-tight break-words">{c.value}</p>
                   </div>
-                </div>
-              )
-              return c.href ? (
-                <a key={c.label} href={c.href} className="block">{inner}</a>
-              ) : (
-                <div key={c.label}>{inner}</div>
-              )
-            })}
+                )
+                return c.href ? (
+                  <a key={c.label} href={c.href} className="block">{inner}</a>
+                ) : (
+                  <div key={c.label}>{inner}</div>
+                )
+              })}
+            </div>
 
-            {/* Socials */}
+            {/* Сошиал */}
             <div className="rounded-2xl border border-gold-light/70 px-6 py-5"
               style={{ background: 'linear-gradient(160deg, #FFFDF8, #FAF7F2)' }}>
-              <p className="font-cormorant tracking-widest text-xs uppercase text-ink/40 mb-3">Сошиал хаягууд</p>
-              <div className="flex gap-3">
+              <p className="font-cormorant tracking-widest text-xs uppercase text-ink/40 mb-3">Нийгмийн сүлжээ</p>
+              <div className="flex flex-col gap-2.5">
                 {SOCIALS.map((s) => (
                   <a
                     key={s.label}
                     href={s.href}
-                    className="font-cormorant text-sm tracking-wide uppercase text-gold-dark border border-gold-mid/40 rounded-full px-4 py-1.5 hover:bg-gold-light/40 transition-colors"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-between rounded-xl border border-gold-mid/30 px-4 py-2.5 hover:bg-gold-light/40 transition-colors group"
                   >
-                    {s.label}
+                    <span className="font-cormorant text-base text-ink">{s.label}</span>
+                    <span className="font-cormorant text-sm text-gold-dark group-hover:translate-x-0.5 transition-transform">{s.handle} →</span>
                   </a>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Form */}
+          {/* Баруун тал — маягт */}
           <div className="rounded-2xl border border-gold-light/70 px-7 py-7"
             style={{ background: 'linear-gradient(160deg, #FFFDF8, #FBF6EC)' }}>
             {sent ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-10">
                 <div className="text-5xl mb-4">🌸</div>
                 <h3 className="font-playfair italic text-2xl text-ink mb-2">Баярлалаа!</h3>
-                <p className="font-cormorant text-base text-ink/60 max-w-xs">
-                  <span className="text-gold-dark font-medium">{form.name}</span>, таны мэдэгдлийг хүлээн авлаа.
-                  Удахгүй холбогдох болно.
+                <p className="font-cormorant text-lg text-ink/60 max-w-xs">
+                  Удахгүй холбоо барина.
                 </p>
               </div>
             ) : (
@@ -130,7 +134,7 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label className="font-cormorant text-sm text-ink/60 mb-1 block">Утас</label>
+                  <label className="font-cormorant text-sm text-ink/60 mb-1 block">Утасны дугаар</label>
                   <input
                     type="tel"
                     value={form.phone}
