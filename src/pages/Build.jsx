@@ -41,7 +41,7 @@ export default function Build() {
 
   return (
     <div className="min-h-screen bg-cream pt-24 pb-20 px-4">
-      <div className="max-w-3xl mx-auto">
+      <div className={`mx-auto ${step === 1 ? 'max-w-5xl' : 'max-w-3xl'}`}>
         {/* Page title */}
         <div className="text-center mb-10">
           <p className="font-cormorant tracking-[0.4em] text-xs uppercase text-gold-dark/60 mb-2">
