@@ -118,6 +118,12 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <Link
+              to="/admin/ready"
+              className="font-cormorant text-sm tracking-widest uppercase text-cream/50 hover:text-cream transition-colors"
+            >
+              💐 Бэлэн
+            </Link>
+            <Link
               to="/admin/flowers"
               className="font-cormorant text-sm tracking-widest uppercase text-cream/50 hover:text-cream transition-colors"
             >

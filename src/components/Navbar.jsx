@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 const navLinks = [
   { label: 'Нүүр', to: '/' },
+  { label: 'Бэлэн баглаа', to: '/ready' },
   { label: 'Баглаа бүтээх', to: '/build' },
   { label: 'Тухай', to: '/about' },
   { label: 'Холбоо барих', to: '/contact' },

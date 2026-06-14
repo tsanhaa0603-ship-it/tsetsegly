@@ -5,9 +5,11 @@ import Build from './pages/Build'
 import Gift from './pages/Gift'
 import About from './pages/About'
 import Contact from './pages/Contact'
+import ReadyBouquets from './pages/ReadyBouquets'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminFlowers from './pages/admin/AdminFlowers'
+import AdminReady from './pages/admin/AdminReady'
 import { getToken } from './lib/api'
 
 /* Нэвтрээгүй бол /admin/login руу чиглүүлнэ */
@@ -27,11 +29,13 @@ export default function App() {
       {!hideNav && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/ready" element={<ReadyBouquets />} />
         <Route path="/build" element={<Build />} />
         <Route path="/gift/:id" element={<Gift />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<RequireAuth><AdminDashboard /></RequireAuth>} />
         <Route path="/admin/flowers" element={<RequireAuth><AdminFlowers /></RequireAuth>} />
+        <Route path="/admin/ready" element={<RequireAuth><AdminReady /></RequireAuth>} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>

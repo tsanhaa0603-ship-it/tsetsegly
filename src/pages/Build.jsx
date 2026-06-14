@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import StepIndicator from '../components/builder/StepIndicator'
 import Step1Flowers from '../components/builder/Step1Flowers'
 import Step2Wrapping from '../components/builder/Step2Wrapping'
@@ -10,7 +11,10 @@ import { DEFAULT_CATALOG } from '../lib/flowers'
 const TOTAL_STEPS = 4
 
 export default function Build() {
-  const [step, setStep] = useState(1)
+  const location = useLocation()
+  // Бэлэн баглаанаас ирсэн тохиргоо (байвал)
+  const preset = location.state?.preset
+  const [step, setStep] = useState(location.state?.startStep || 1)
   const [catalog, setCatalog] = useState(DEFAULT_CATALOG)
 
   // Цэцгийн каталогийг backend-аас татна (амжилтгүй бол default)
@@ -19,11 +23,11 @@ export default function Build() {
     fetchFlowers().then((c) => { if (active) setCatalog(c) })
     return () => { active = false }
   }, [])
-  const [order, setOrder] = useState({
-    flowers: {},      // { id: quantity }
-    shape: null,      // bouquet shape id
-    wrapping: null,   // wrapping id
-    ribbon: null,     // ribbon id
+  const [order, setOrder] = useState(() => ({
+    flowers: preset?.flowers || {},  // { 'flowerKey:colorKey': qty }
+    shape: preset?.shape || null,    // bouquet shape id
+    wrapping: preset?.wrapping || null, // wrapping id
+    ribbon: preset?.ribbon || null,  // ribbon id
     name: '',
     phone: '',
     gift: {           // дижитал бэлгийн хуудасны агуулга
@@ -34,7 +38,7 @@ export default function Build() {
       photos: [],
       nfcText: '',      // NFC chip-д бичих мэндчилгээ
     },
-  })
+  }))
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS))
   const prev = () => setStep((s) => Math.max(s - 1, 1))

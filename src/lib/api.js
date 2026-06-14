@@ -150,6 +150,58 @@ export async function updateFlowerType(key, payload) {
   return res.json()
 }
 
+/* ── Бэлэн баглаа ── */
+/* GET /api/ready — public идэвхтэй баглаанууд */
+export async function fetchReadyBouquets() {
+  try {
+    const res = await fetch(`${API}/api/ready`)
+    if (!res.ok) return []
+    return res.json()
+  } catch {
+    return []
+  }
+}
+
+/* GET /api/ready/manage — admin бүгд */
+export async function fetchAllReadyBouquets() {
+  const res = await fetch(`${API}/api/ready/manage`, { headers: authHeader() })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) throw new Error('Татахад алдаа гарлаа')
+  return res.json()
+}
+
+export async function createReadyBouquet(payload) {
+  const res = await fetch(`${API}/api/ready`, {
+    method: 'POST',
+    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) throw new Error('Үүсгэхэд алдаа гарлаа')
+  return res.json()
+}
+
+export async function updateReadyBouquet(id, payload) {
+  const res = await fetch(`${API}/api/ready/${id}`, {
+    method: 'PATCH',
+    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) throw new Error('Шинэчлэхэд алдаа гарлаа')
+  return res.json()
+}
+
+export async function deleteReadyBouquet(id) {
+  const res = await fetch(`${API}/api/ready/${id}`, {
+    method: 'DELETE',
+    headers: authHeader(),
+  })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) throw new Error('Устгахад алдаа гарлаа')
+  return res.json()
+}
+
 /* NFC бэлгийн мэдээлэл татах — олдохгүй бол null */
 export async function fetchGift(id) {
   const res = await fetch(`${API}/api/gift/${id}`)
