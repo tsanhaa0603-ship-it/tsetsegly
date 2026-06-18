@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import ChatWidget from './components/ChatWidget'
 import Home from './pages/Home'
 import Build from './pages/Build'
 import Gift from './pages/Gift'
@@ -23,6 +24,8 @@ export default function App() {
   // Gift болон Admin хуудаснууд өөрийн бүтэн дэлгэцийн дизайнтай — navbar харуулахгүй
   const hideNav =
     location.pathname.startsWith('/gift/') || location.pathname.startsWith('/admin')
+  // Чат товч admin-аас бусад бүх хуудсанд (gift хуудсанд ч мөн адил)
+  const hideChat = location.pathname.startsWith('/admin')
 
   return (
     <>
@@ -39,6 +42,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
+      {!hideChat && <ChatWidget />}
     </>
   )
 }
