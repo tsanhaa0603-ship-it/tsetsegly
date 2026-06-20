@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tsetsegly.vercel.app/sitemap.xml
+Sitemap: https://tsetsegly.mn/sitemap.xml
