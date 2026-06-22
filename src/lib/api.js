@@ -56,6 +56,33 @@ export async function createOrder(payload) {
 }
 
 /* ─────────────────────────────────────────────
+   QPay төлбөр
+───────────────────────────────────────────── */
+
+/* Захиалгад QPay нэхэмжлэх (QR) үүсгэх.
+   Буцаах: { invoiceId, qrImage, qrText, urls } эсвэл { alreadyPaid: true } */
+export async function createQpayInvoice(orderId) {
+  const res = await fetch(`${API}/api/qpay/invoice`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ orderId }),
+  })
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}))
+    throw new Error(e.error || 'Төлбөрийн нэхэмжлэх үүсгэхэд алдаа гарлаа')
+  }
+  return res.json()
+}
+
+/* Төлбөрийн статус шалгах (polling).
+   Буцаах: { paymentStatus: 'unpaid' | 'paid', paidAmount, ... } */
+export async function fetchPaymentStatus(orderId) {
+  const res = await fetch(`${API}/api/qpay/status/${orderId}`)
+  if (!res.ok) throw new Error('Төлбөрийн статус шалгахад алдаа гарлаа')
+  return res.json()
+}
+
+/* ─────────────────────────────────────────────
    Admin (JWT)
 ───────────────────────────────────────────── */
 const TOKEN_KEY = 'tsetsegly_admin_token'

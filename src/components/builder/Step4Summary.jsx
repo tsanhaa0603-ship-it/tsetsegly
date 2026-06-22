@@ -5,6 +5,7 @@ import { SHAPES, ShapeSVG } from './BouquetShapes'
 import { saveGift, giftUrl } from '../../lib/giftStore'
 import { createOrder, buildOrderPayload } from '../../lib/api'
 import { flattenCatalog, calcTotal } from '../../lib/flowers'
+import QpayModal from './QpayModal'
 
 function fmt(n) {
   return '₮' + n.toLocaleString('mn-MN')
@@ -17,6 +18,8 @@ export default function Step4Summary({ order, catalog, onChange, onPrev }) {
   const [copied, setCopied] = useState(false)
   const [saving, setSaving] = useState(false)
   const [offline, setOffline] = useState(false)
+  const [showQpay, setShowQpay] = useState(false)
+  const [paid, setPaid] = useState(false)
 
   const flat = flattenCatalog(catalog)
   const selectedFlowers = Object.entries(order.flowers || {})
@@ -42,6 +45,10 @@ export default function Step4Summary({ order, catalog, onChange, onPrev }) {
     const e = validate()
     if (Object.keys(e).length) { setErrors(e); return }
 
+    // Захиалга аль хэдийн backend-д үүссэн бол (giftId, offline биш) дахин үүсгэхгүй,
+    // зөвхөн QPay цонхыг дахин нээнэ
+    if (giftId && !offline) { setShowQpay(true); return }
+
     setSaving(true)
     setOffline(false)
     const fullOrder = { ...order, total: grandTotal }
@@ -50,9 +57,10 @@ export default function Step4Summary({ order, catalog, onChange, onPrev }) {
       // Backend-д шууд хадгална
       const { id } = await createOrder(buildOrderPayload(fullOrder, catalog))
       setGiftId(id)
-      setSubmitted(true)
+      // Захиалга үүссэн — QPay төлбөрийн цонх нээнэ
+      setShowQpay(true)
     } catch {
-      // Backend холбогдоогүй бол localStorage-д хадгална (offline fallback)
+      // Backend холбогдоогүй бол localStorage-д хадгална (offline fallback — төлбөргүй)
       const id = saveGift({
         flowers: order.flowers,
         shape: order.shape,
@@ -69,6 +77,13 @@ export default function Step4Summary({ order, catalog, onChange, onPrev }) {
     } finally {
       setSaving(false)
     }
+  }
+
+  // QPay төлбөр амжилттай төлөгдсөн
+  function handlePaid() {
+    setShowQpay(false)
+    setPaid(true)
+    setSubmitted(true)
   }
 
   async function copyLink() {
@@ -97,6 +112,17 @@ export default function Step4Summary({ order, catalog, onChange, onPrev }) {
           <div className="text-6xl mb-5">🌸</div>
           <h2 className="font-playfair italic text-3xl text-ink mb-3">Захиалга амжилттай!</h2>
           <div className="w-12 h-px mx-auto mb-5" style={{ background: 'linear-gradient(90deg,transparent,#C9A961,transparent)' }} />
+
+          {paid && (
+            <div className="mb-5 inline-flex items-center gap-2 px-4 py-1.5 rounded-full"
+              style={{ background: 'linear-gradient(135deg, #F4EBD3, #FEF8EC)', border: '1px solid #C9A961' }}>
+              <span className="text-base">✓</span>
+              <span className="font-cormorant text-sm tracking-wide text-gold-dark font-medium">
+                Төлбөр төлөгдсөн — {fmt(grandTotal)}
+              </span>
+            </div>
+          )}
+
           <p className="font-cormorant text-lg text-ink/60 max-w-sm mx-auto leading-relaxed">
             <span className="text-gold-dark font-medium">{order.name}</span>, таны захиалгыг хүлээн авлаа.<br />
             Удахгүй <span className="text-gold-dark font-medium">{order.phone}</span> дугаарт холбогдоно.
@@ -336,10 +362,20 @@ export default function Step4Summary({ order, catalog, onChange, onPrev }) {
             />
           )}
           <span className="relative text-ink font-medium flex items-center justify-center gap-2">
-            {saving ? 'Хадгалж байна…' : '🌸 Захиалга өгөх'}
+            {saving ? 'Хадгалж байна…' : '💳 QPay-аар төлөх'}
           </span>
         </button>
       </div>
+
+      {/* QPay төлбөрийн цонх */}
+      {showQpay && giftId && (
+        <QpayModal
+          orderId={giftId}
+          amount={grandTotal}
+          onPaid={handlePaid}
+          onClose={() => setShowQpay(false)}
+        />
+      )}
     </div>
   )
 }

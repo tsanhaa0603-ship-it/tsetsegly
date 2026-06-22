@@ -41,6 +41,16 @@ const OrderSchema = new mongoose.Schema(
       enum: ['new', 'preparing', 'ready', 'delivered'],
       default: 'new',
     },
+
+    // ── QPay төлбөр ──
+    paymentStatus: {
+      type: String,
+      enum: ['unpaid', 'paid'],
+      default: 'unpaid',
+    },
+    qpayInvoiceId: { type: String, default: '' },   // QPay-ийн буцаасан invoice_id
+    paidAmount: { type: Number, default: 0 },        // бодитоор төлөгдсөн дүн
+    paidAt: { type: Date, default: null },           // төлбөр баталгаажсан огноо
   },
   { timestamps: true }
 )
