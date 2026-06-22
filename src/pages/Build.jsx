@@ -40,6 +40,11 @@ export default function Build() {
     },
   }))
 
+  // Алхам солигдох бүрт дэлгэцийг дээрээс эхлүүлнэ (route өөрчлөгддөггүй тул ScrollToTop ажиллахгүй)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [step])
+
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS))
   const prev = () => setStep((s) => Math.max(s - 1, 1))
 
