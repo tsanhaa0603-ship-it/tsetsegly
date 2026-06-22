@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import ChatWidget from './components/ChatWidget'
+import ScrollToTop from './components/ScrollToTop'
 import Home from './pages/Home'
 import Build from './pages/Build'
 import Gift from './pages/Gift'
@@ -29,6 +30,7 @@ export default function App() {
 
   return (
     <>
+      <ScrollToTop />
       {!hideNav && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
