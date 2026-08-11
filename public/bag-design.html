@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tsetsegly — Баглааны цүнхний загвар</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500&family=Cormorant+Garamond:wght@500;600;700&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FAF7F2; --gold-light:#F4EBD3; --gold:#C9A961; --gold-dark:#8A6E2F;
+    --ink:#1A1A1A; --seal:#17392B; --seal-dark:#0F2A20; --seal-light:#22513C;
+    --kraft:#C79A6B; --kraft-dark:#A2764A; --kraft-light:#D9B489;
+    --paper:#EFE9DF; --muted:#6b6459; --line:#e6dfcf;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:'Cormorant Garamond',Georgia,serif; background:var(--paper); color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact}
+
+  .topbar{position:sticky; top:0; z-index:5; background:#fff; border-bottom:1px solid var(--line);
+    padding:16px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap}
+  .topbar h1{font-family:'Playfair Display',serif; font-style:italic; font-weight:500; font-size:22px; margin:0; color:var(--gold-dark)}
+  .topbar p{margin:2px 0 0; font-size:15px; color:var(--muted)}
+  .btn{font-family:'Cormorant Garamond',serif; font-weight:700; letter-spacing:1px; background:var(--ink);
+    color:var(--gold-light); border:none; border-radius:8px; padding:11px 22px; font-size:16px; cursor:pointer}
+  .btn:hover{background:#000}
+
+  .wrap{max-width:920px; margin:0 auto; padding:28px 24px 70px}
+  .card{background:#fff; border:1px solid var(--line); border-radius:14px; padding:26px 28px; margin-bottom:26px}
+  .card h2{font-family:'Cormorant Garamond',serif; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    font-size:16px; color:var(--gold-dark); margin:0 0 4px}
+  .card .meta{font-size:15px; color:var(--muted); margin:0 0 22px}
+  .lead{font-size:17px; line-height:1.75; margin:0 0 8px}
+  .lead b{color:var(--ink)}
+
+  .stage{display:flex; align-items:flex-start; gap:34px; flex-wrap:wrap; justify-content:center}
+  .caption{font-size:14px; color:var(--muted); text-align:center; margin-top:10px; letter-spacing:1px}
+
+  table{width:100%; border-collapse:collapse; font-size:15px}
+  th,td{text-align:left; padding:11px 10px; border-bottom:1px solid var(--line)}
+  th{font-weight:700; letter-spacing:2px; text-transform:uppercase; font-size:12.5px; color:var(--gold-dark)}
+  td b{color:var(--ink)}
+  td.num{font-variant-numeric:tabular-nums; white-space:nowrap}
+  tr.hero td{background:#FBF8F2}
+
+  .pill{display:inline-block; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    padding:3px 10px; border-radius:20px; background:var(--gold-light); color:var(--gold-dark)}
+
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:22px}
+  .spec{background:#FBF8F2; border-radius:10px; padding:16px 18px}
+  .spec h3{font-family:'Cormorant Garamond',serif; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    font-size:12.5px; color:var(--gold-dark); margin:0 0 8px}
+  .spec ul{margin:0; padding-left:18px; font-size:15px; line-height:1.7}
+  .spec li{margin-bottom:3px}
+
+  .note{font-size:15px; color:var(--muted); line-height:1.8}
+  .note b{color:var(--ink)}
+
+  @media print{
+    @page{size:A4; margin:12mm}
+    .topbar{display:none !important}
+    body{background:#fff}
+    .wrap{max-width:none; padding:0}
+    .card{border:none; padding:0; margin:0 0 12mm; break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Tsetsegly — баглааны цүнхний загвар</h1>
+      <p>Судалгаанд суурилсан хэмжээ, 2 өнгөний хувилбар, хэвлэлийн dieline ба үйлдвэрлэлийн тодорхойлолт.</p>
+    </div>
+    <button class="btn" onclick="window.print()">Хэвлэх / PDF</button>
+  </div>
+
+  <div class="wrap">
+
+    <!-- 1 · Concept -->
+    <div class="card">
+      <h2>Концепц</h2>
+      <p class="meta">Яагаад ийм хэмжээ, ийм хэлбэр вэ</p>
+      <p class="lead">
+        Гар боолт баглааг цүнхэнд <b>бүтнээр нь хийдэггүй</b> — иш ба боолтын доод хэсэг л дотогш ордог,
+        цэцгийн толгой ирмэгээс дээш чөлөөтэй дэлгэрч суудаг. Тиймээс цүнх нь өндөр биш,
+        харин <b>дөрвөлжин ёроолтой</b>, боолтын суурийг шахахгүй багтаах өргөнтэй байх ёстой.
+      </p>
+      <p class="lead">
+        Бариул урт тул баглаа биенээс хол, толгой нь дээш чөлөөтэй явж <b>дэлбээ гэмтэхгүй</b>.
+        Дээд ба ёроолын хатуу картон нь ачаалалтай үедээ ч хэлбэрээ хадгална.
+      </p>
+      <div class="grid2" style="margin-top:18px">
+        <div class="spec">
+          <h3>Гол зарчим</h3>
+          <ul>
+            <li>Дөрвөлжин ёроол — баглаа хазайхгүй, зогсоно</li>
+            <li>Өргөн ам — боолтын суурь чөлөөтэй ордог</li>
+            <li>Урт бариул — цэцэг биед үрэгдэхгүй</li>
+            <li>Хатуу ирмэг — хэлбэрээ алдахгүй</li>
+          </ul>
+        </div>
+        <div class="spec">
+          <h3>Луксари гаргах 4 нарийн ширийн</h3>
+          <ul>
+            <li>Гүн ойн ногоон + алтан фойл дардас</li>
+            <li>Матт (soft-touch) ламинац — хуруу мөр үлдээхгүй</li>
+            <li>Хөвөн тууз бариул, алтан үзүүрийн бэхэлгээ</li>
+            <li>Дотор талд лого давтсан хээ</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 · Sizes -->
+    <div class="card">
+      <h2>Хэмжээ — 3 стандарт</h2>
+      <p class="meta">Өргөн × Гүн × Өндөр (мм) · бариулын нийт урт · багтаамж</p>
+
+      <div class="stage">
+        <svg width="100%" viewBox="0 0 680 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Гурван хэмжээний харьцуулалт">
+          <line x1="40" y1="300" x2="640" y2="300" stroke="#e6dfcf" stroke-width="1"/>
+
+          <g>
+            <rect x="70" y="160" width="110" height="140" rx="2" fill="#F4EBD3" stroke="#C9A961" stroke-width="1.4"/>
+            <path d="M95,160 C95,120 155,120 155,160" fill="none" stroke="#C9A961" stroke-width="3" stroke-linecap="round"/>
+            <text x="125" y="235" text-anchor="middle" font-family="Cinzel, serif" font-size="15" fill="#8A6E2F">S</text>
+            <text x="125" y="322" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="14" fill="#6b6459">220×200×300</text>
+          </g>
+
+          <g>
+            <rect x="255" y="120" width="140" height="180" rx="2" fill="#17392B" stroke="#C9A961" stroke-width="1.6"/>
+            <path d="M288,120 C288,66 362,66 362,120" fill="none" stroke="#C9A961" stroke-width="3.4" stroke-linecap="round"/>
+            <text x="325" y="212" text-anchor="middle" font-family="Cinzel, serif" font-size="17" fill="#C9A961">M</text>
+            <text x="325" y="322" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="14" fill="#1A1A1A">280×250×360</text>
+            <text x="325" y="100" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="12" letter-spacing="2" fill="#8A6E2F">ГОЛ ХЭМЖЭЭ</text>
+          </g>
+
+          <g>
+            <rect x="470" y="90" width="170" height="210" rx="2" fill="#F4EBD3" stroke="#C9A961" stroke-width="1.4"/>
+            <path d="M508,90 C508,28 602,28 602,90" fill="none" stroke="#C9A961" stroke-width="3" stroke-linecap="round"/>
+            <text x="555" y="200" text-anchor="middle" font-family="Cinzel, serif" font-size="17" fill="#8A6E2F">L</text>
+            <text x="555" y="322" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="14" fill="#6b6459">340×300×420</text>
+          </g>
+        </svg>
+      </div>
+
+      <table style="margin-top:20px">
+        <tr>
+          <th>Хэмжээ</th><th>Ө × Г × Ө (мм)</th><th>Бариул</th><th>Багтаамж</th><th>Хэрэглээ</th>
+        </tr>
+        <tr>
+          <td><b>S</b> · Petite</td>
+          <td class="num">220 × 200 × 300</td>
+          <td class="num">700 мм</td>
+          <td>15–25 иш</td>
+          <td>Жижиг баглаа, бэлэг</td>
+        </tr>
+        <tr class="hero">
+          <td><b>M</b> · Signature <span class="pill">Санал болгож буй</span></td>
+          <td class="num">280 × 250 × 360</td>
+          <td class="num">900 мм</td>
+          <td>25–45 иш</td>
+          <td>Ердийн захиалга — 70% нь энэ</td>
+        </tr>
+        <tr>
+          <td><b>L</b> · Grand</td>
+          <td class="num">340 × 300 × 420</td>
+          <td class="num">1000 мм</td>
+          <td>50+ иш, ус савтай</td>
+          <td>Том баглаа, эвент</td>
+        </tr>
+      </table>
+
+      <p class="note" style="margin-top:16px">
+        · Бариулын урт нь <b>нийт</b> хэмжээ (гогцооны хоёр тал). M-ийн 900 мм = <b>~380 мм унжилт</b> —
+        гарт болон шуунд авахад тохиромжтой, баглаа биед хүрэхгүй.<br/>
+        · Гүн нь өргөнөөс арай бага (280:250) — ингэснээр боолт дотогш багтаж, цүнх хавтгайрахгүй.
+      </p>
+    </div>
+
+    <!-- 3 · Colorway A -->
+    <div class="card">
+      <h2>Өнгө A · Гүн ногоон + алтан фойл</h2>
+      <p class="meta">Үндсэн луксари хувилбар · матт ламинац · хөвөн тууз бариул</p>
+      <div class="stage">
+        <div>
+          <svg width="420" viewBox="0 0 420 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ногоон цүнхний загвар">
+            <ellipse cx="215" cy="512" rx="150" ry="14" fill="#000" opacity="0.07"/>
+            <path d="M202,138 C202,52 302,52 302,138" fill="none" stroke="#C9A961" stroke-width="7" stroke-linecap="round" opacity="0.5"/>
+            <polygon points="60,175 300,175 372,138 132,138" fill="#0F2A20"/>
+            <polygon points="300,175 372,138 372,442 300,478" fill="#123024"/>
+            <rect x="60" y="175" width="240" height="303" fill="#17392B"/>
+            <rect x="60" y="175" width="240" height="10" fill="#22513C"/>
+            <path d="M130,175 C130,84 230,84 230,175" fill="none" stroke="#E8DCC0" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="130" cy="177" r="5" fill="#C9A961"/>
+            <circle cx="230" cy="177" r="5" fill="#C9A961"/>
+            <image href="logo.png" x="129" y="228" width="102" height="102" preserveAspectRatio="xMidYMid meet"/>
+            <text x="180" y="378" text-anchor="middle" font-family="Cinzel, serif" font-weight="600" font-size="30" letter-spacing="2" fill="#C9A961">TSETSEGLY</text>
+            <line x1="130" y1="398" x2="230" y2="398" stroke="#C9A961" stroke-width="0.9"/>
+            <text x="180" y="420" text-anchor="middle" font-family="Cormorant Garamond, serif" font-weight="600" font-size="12" letter-spacing="4" fill="#C9A961">MADE TO ORDER FLOWERS</text>
+            <text x="336" y="440" text-anchor="middle" font-family="Cormorant Garamond, serif" font-weight="600" font-size="11" letter-spacing="2" fill="#C9A961" opacity="0.8">@tsetsegly</text>
+          </svg>
+          <p class="caption">Урд тал — алтан фойл лого, wordmark, tagline</p>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:22px">
+        <div class="spec">
+          <h3>Өнгө</h3>
+          <ul>
+            <li>Их бие: гүн ойн ногоон <b>#17392B</b></li>
+            <li>Хэвлэл: алтан фойл (Pantone 871 C)</li>
+            <li>Бариул: цөцгий хөвөн тууз <b>#E8DCC0</b></li>
+          </ul>
+        </div>
+        <div class="spec">
+          <h3>Хаана хэрэглэх</h3>
+          <ul>
+            <li>Бэлэг, онцгой захиалга</li>
+            <li>Хайр дурлал, ой тэмдэглэл</li>
+            <li>Корпорэйт захиалга</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 · Colorway B -->
+    <div class="card">
+      <h2>Өнгө B · Байгалийн крафт</h2>
+      <p class="meta">Өдөр тутмын хувилбар · эко, зардал хэмнэсэн · нэг өнгийн дардас</p>
+      <div class="stage">
+        <div>
+          <svg width="420" viewBox="0 0 420 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Крафт цүнхний загвар">
+            <ellipse cx="215" cy="512" rx="150" ry="14" fill="#000" opacity="0.07"/>
+            <path d="M202,138 C202,52 302,52 302,138" fill="none" stroke="#8A6E2F" stroke-width="7" stroke-linecap="round" opacity="0.4"/>
+            <polygon points="60,175 300,175 372,138 132,138" fill="#A2764A"/>
+            <polygon points="300,175 372,138 372,442 300,478" fill="#B4855A"/>
+            <rect x="60" y="175" width="240" height="303" fill="#C79A6B"/>
+            <rect x="60" y="175" width="240" height="10" fill="#D9B489"/>
+            <path d="M130,175 C130,84 230,84 230,175" fill="none" stroke="#5E4326" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="130" cy="177" r="5" fill="#5E4326"/>
+            <circle cx="230" cy="177" r="5" fill="#5E4326"/>
+            <g opacity="0.92">
+              <circle cx="180" cy="279" r="52" fill="none" stroke="#5E4326" stroke-width="1.6"/>
+              <circle cx="180" cy="279" r="46" fill="none" stroke="#5E4326" stroke-width="0.7"/>
+              <image href="logo.png" x="139" y="238" width="82" height="82" preserveAspectRatio="xMidYMid meet" opacity="0.9"/>
+            </g>
+            <text x="180" y="378" text-anchor="middle" font-family="Cinzel, serif" font-weight="600" font-size="30" letter-spacing="2" fill="#5E4326">TSETSEGLY</text>
+            <line x1="130" y1="398" x2="230" y2="398" stroke="#5E4326" stroke-width="0.9"/>
+            <text x="180" y="420" text-anchor="middle" font-family="Cormorant Garamond, serif" font-weight="600" font-size="12" letter-spacing="4" fill="#5E4326">MADE TO ORDER FLOWERS</text>
+            <text x="336" y="440" text-anchor="middle" font-family="Cormorant Garamond, serif" font-weight="600" font-size="11" letter-spacing="2" fill="#5E4326" opacity="0.75">@tsetsegly</text>
+          </svg>
+          <p class="caption">Крафт — нэг өнгийн (хүрэн) дардас, ижил бүтэц</p>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:22px">
+        <div class="spec">
+          <h3>Өнгө</h3>
+          <ul>
+            <li>Их бие: байгалийн крафт <b>#C79A6B</b></li>
+            <li>Хэвлэл: хар хүрэн <b>#5E4326</b>, 1 өнгө</li>
+            <li>Бариул: ижил өнгийн цаасан тууз</li>
+          </ul>
+        </div>
+        <div class="spec">
+          <h3>Хаана хэрэглэх</h3>
+          <ul>
+            <li>Өдөр тутмын захиалга</li>
+            <li>Их хэмжээний хүргэлт</li>
+            <li>Зардал 35–40% хямд</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 · Dieline -->
+    <div class="card">
+      <h2>Dieline — хэвлэлийн зураг (M хэмжээ)</h2>
+      <p class="meta">Задаргаа: урд · хажуу · ар · хажуу · наалтын хэл · нийт 1080 × 550 мм</p>
+      <div class="stage">
+        <svg width="100%" viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Цүнхний dieline">
+          <rect x="40" y="60" width="580" height="40" fill="#FBF8F2" stroke="#C9A961" stroke-width="1" stroke-dasharray="5 4"/>
+          <text x="330" y="85" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="12" letter-spacing="2" fill="#8A6E2F">ДЭЭД ЭВХЭЛТ · 40 мм (хатуу картон)</text>
+
+          <rect x="40" y="100" width="170" height="190" fill="#17392B"/>
+          <rect x="210" y="100" width="150" height="190" fill="#F4EBD3"/>
+          <rect x="360" y="100" width="170" height="190" fill="#1E4633"/>
+          <rect x="530" y="100" width="150" height="190" fill="#F4EBD3" opacity="0"/>
+          <rect x="530" y="100" width="90" height="190" fill="#F4EBD3"/>
+          <rect x="620" y="100" width="20" height="190" fill="#E8DCC0"/>
+
+          <line x1="210" y1="100" x2="210" y2="290" stroke="#C9A961" stroke-width="1" stroke-dasharray="5 4"/>
+          <line x1="360" y1="100" x2="360" y2="290" stroke="#C9A961" stroke-width="1" stroke-dasharray="5 4"/>
+          <line x1="530" y1="100" x2="530" y2="290" stroke="#C9A961" stroke-width="1" stroke-dasharray="5 4"/>
+          <line x1="620" y1="100" x2="620" y2="290" stroke="#C9A961" stroke-width="1" stroke-dasharray="5 4"/>
+
+          <image href="logo.png" x="98" y="132" width="54" height="54" preserveAspectRatio="xMidYMid meet"/>
+          <text x="125" y="212" text-anchor="middle" font-family="Cinzel, serif" font-weight="600" font-size="15" letter-spacing="1" fill="#C9A961">TSETSEGLY</text>
+          <text x="125" y="230" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="8" letter-spacing="2" fill="#C9A961">MADE TO ORDER FLOWERS</text>
+          <text x="125" y="278" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="11" letter-spacing="2" fill="#C9A961" opacity="0.75">УРД · 280</text>
+
+          <text x="285" y="196" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="11" letter-spacing="2" fill="#8A6E2F">ХАЖУУ</text>
+          <text x="285" y="214" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="11" fill="#8A6E2F">250</text>
+          <text x="285" y="252" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="10" letter-spacing="1" fill="#8A6E2F">@tsetsegly</text>
+
+          <text x="445" y="196" text-anchor="middle" font-family="Cinzel, serif" font-size="13" letter-spacing="1" fill="#C9A961">TSETSEGLY</text>
+          <text x="445" y="278" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="11" letter-spacing="2" fill="#C9A961" opacity="0.75">АР · 280</text>
+
+          <text x="575" y="196" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="11" letter-spacing="2" fill="#8A6E2F">ХАЖУУ</text>
+          <text x="575" y="214" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="11" fill="#8A6E2F">250</text>
+          <text x="631" y="200" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="9" fill="#8A6E2F" transform="rotate(90 631 200)">НААЛТ 20</text>
+
+          <rect x="40" y="290" width="580" height="60" fill="#FBF8F2" stroke="#C9A961" stroke-width="1" stroke-dasharray="5 4"/>
+          <text x="330" y="325" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="12" letter-spacing="2" fill="#8A6E2F">ЁРООЛЫН ХЭЛ · 150 мм (хатуу ёроолын картон)</text>
+
+          <line x1="40" y1="376" x2="640" y2="376" stroke="#8A6E2F" stroke-width="0.8"/>
+          <text x="340" y="393" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="12" fill="#8A6E2F">Нийт өргөн 1080 мм (280+250+280+250+20)</text>
+          <line x1="24" y1="100" x2="24" y2="290" stroke="#8A6E2F" stroke-width="0.8"/>
+          <text x="16" y="200" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="12" fill="#8A6E2F" transform="rotate(-90 16 200)">Өндөр 360</text>
+        </svg>
+      </div>
+      <p class="note" style="margin-top:14px">
+        · Бариулын нүх: дээд ирмэгээс <b>25 мм</b> доош, төвөөс <b>±55 мм</b>, Ø 10 мм — люверс (eyelet) алтан өнгөтэй.<br/>
+        · Bleed <b>3 мм</b>, аюулгүй талбай ирмэгээс <b>8 мм</b>. Тайрах шугам тасархай.<br/>
+        · Логоны төв: урд талын дээд ирмэгээс <b>105 мм</b> доош, хэвтээ дунд.
+      </p>
+    </div>
+
+    <!-- 6 · Production spec -->
+    <div class="card">
+      <h2>Үйлдвэрлэлийн тодорхойлолт</h2>
+      <p class="meta">Принтерт шууд өгөх техникийн мэдээлэл</p>
+      <table>
+        <tr><th>Зүйл</th><th>Тодорхойлолт</th></tr>
+        <tr><td><b>Материал</b></td><td>FSC гэрчилгээтэй 210–250 гр/м² картон (крафт хувилбарт 200 гр/м² крафт цаас)</td></tr>
+        <tr><td><b>Гадаргуу</b></td><td>Ногоон: матт (soft-touch) ламинац · Крафт: ламинацгүй, натурал</td></tr>
+        <tr><td><b>Хэвлэл</b></td><td>Ногоон: CMYK суурь + <b>алтан халуун фойл</b> (hot foil) лого/бичиг · Крафт: 1 өнгө флексо</td></tr>
+        <tr><td><b>Бариул</b></td><td>25 мм өргөн хөвөн тууз, гогцоо 900 мм, люверсээр бэхэлнэ (алтан)</td></tr>
+        <tr><td><b>Бэхжилт</b></td><td>Дээд ирмэгт 40 мм эвхэлт + картон, ёроолд 150 мм хэл + хөндлөвч картон</td></tr>
+        <tr><td><b>Ёроол</b></td><td>Дөрвөлжин (square base), цавуудсан</td></tr>
+        <tr><td><b>Файл</b></td><td>Vector PDF/AI, CMYK, фонт кривлэсэн, фойлын хэсэг тусдаа spot давхаргад</td></tr>
+        <tr><td><b>Хамгийн бага захиалга</b></td><td>Ихэвчлэн 300–500 ш (фойлтой бол 500 ш-ээс эдийн засгийн үр ашигтай)</td></tr>
+      </table>
+    </div>
+
+    <!-- 7 · Branding rules -->
+    <div class="card">
+      <h2>Брэндингийн байрлал ба иж бүрдэл</h2>
+      <p class="meta">Цүнх, стикер, картыг нэг системд уях</p>
+      <div class="grid2">
+        <div class="spec">
+          <h3>Цүнхэн дээр</h3>
+          <ul>
+            <li>Урд: лого + TSETSEGLY + tagline (гол тал)</li>
+            <li>Ар: зөвхөн TSETSEGLY (жижиг, даруухан)</li>
+            <li>Хажуу: @tsetsegly · tsetsegly.mn</li>
+            <li>Ёроолын ирмэг: EST 2026</li>
+          </ul>
+        </div>
+        <div class="spec">
+          <h3>Стикертэй уялдаа</h3>
+          <ul>
+            <li><b>1 · Лацан</b> — цүнхний амыг битүүмжилнэ</li>
+            <li><b>4 · Бэлгийн бичиг</b> — цүнхэнд хийж өгнө</li>
+            <li><b>3 · Талархал</b> — дотор боолт дээр</li>
+            <li><b>5 · Wordmark</b> — тунгалаг боолт дээр</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note" style="margin-top:16px">
+        Лого нь <b>тунгалаг дэвсгэртэй</b> тул ногоон болон крафт аль ч гадаргуу дээр шууд суух ба
+        тусдаа дэвсгэр шаардахгүй. Алтан фойл нь гүн ногоон дээр хамгийн өндөр контрасттай.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
