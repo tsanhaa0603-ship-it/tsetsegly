@@ -63,14 +63,10 @@
   .qr svg{width:100%; height:100%; display:block}
 
   /* ---------- Sticker 1 · black seal ---------- */
-  .s1{
-    width:210px; height:210px; border-radius:50%; background:var(--seal);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
-    box-shadow:inset 0 0 0 2px var(--gold), inset 0 0 0 4px rgba(201,169,97,.28);
-  }
-  .s1 .coin{width:168px; height:168px; box-shadow:none; background:transparent}
-  .s1 .coin img{width:100%; height:100%; margin:0; object-fit:contain}
-  .s1 .est{font-family:'Cormorant Garamond',serif; font-weight:700; letter-spacing:6px; font-size:15px; color:var(--gold)}
+  .s1{position:relative; width:210px; height:210px; border-radius:50%; background:var(--seal); overflow:hidden}
+  .s1 .s1logo{position:absolute; top:50%; left:50%; width:178px; height:178px; transform:translate(-50%,-60%); object-fit:contain}
+  .s1 .s1ring{position:absolute; inset:0; width:100%; height:100%}
+  .s1arc{font-family:'Cormorant Garamond',serif; font-weight:700; letter-spacing:5px; font-size:12px; fill:var(--gold)}
 
   /* ---------- Sticker 2 · black label + QR ---------- */
   .label{
@@ -150,8 +146,12 @@
       <div class="stage">
         <div class="diecut round">
           <div class="s1">
-            <div class="coin"><img src="logo.png" alt="Tsetsegly" /></div>
-            <div class="est">EST · 2026</div>
+            <img class="s1logo" src="logo.png" alt="Tsetsegly" />
+            <svg class="s1ring" viewBox="0 0 210 210" xmlns="http://www.w3.org/2000/svg">
+              <defs><path id="estArc" d="M14,105 A91,91 0 0 0 196,105" fill="none"/></defs>
+              <circle cx="105" cy="105" r="102" fill="none" stroke="#C9A961" stroke-width="1.4"/>
+              <text class="s1arc"><textPath href="#estArc" startOffset="50%" text-anchor="middle">EST · 2026</textPath></text>
+            </svg>
           </div>
         </div>
       </div>
