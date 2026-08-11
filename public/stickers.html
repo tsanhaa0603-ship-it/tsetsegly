@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tsetsegly — Стикер хэвлэлийн хуудас</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FAF7F2; --gold-light:#F4EBD3; --gold:#C9A961; --gold-dark:#8A6E2F; --ink:#1A1A1A;
+    --paper:#EFE9DF;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:'Cormorant Garamond',Georgia,serif;
+    background:var(--paper); color:var(--ink);
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .topbar{
+    position:sticky; top:0; z-index:5;
+    background:#fff; border-bottom:1px solid #e3dccc;
+    padding:16px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .topbar h1{font-family:'Playfair Display',serif; font-style:italic; font-weight:500; font-size:22px; margin:0; color:var(--gold-dark)}
+  .topbar p{margin:2px 0 0; font-size:15px; color:#6b6459}
+  .btn{
+    font-family:'Cormorant Garamond',serif; font-weight:700; letter-spacing:1px;
+    background:var(--ink); color:var(--gold-light); border:none; border-radius:8px;
+    padding:11px 22px; font-size:16px; cursor:pointer;
+  }
+  .btn:hover{background:#000}
+  .wrap{max-width:900px; margin:0 auto; padding:28px 24px 60px}
+  .card{
+    background:#fff; border:1px solid #e6dfcf; border-radius:14px;
+    padding:26px; margin-bottom:26px;
+  }
+  .card > h2{
+    font-family:'Cormorant Garamond',serif; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    font-size:16px; color:var(--gold-dark); margin:0 0 4px;
+  }
+  .card > .meta{font-size:15px; color:#6b6459; margin:0 0 20px}
+  .stage{display:flex; align-items:center; gap:34px; flex-wrap:wrap; justify-content:center}
+
+  /* ---------- die-cut helper ---------- */
+  .diecut{position:relative; padding:7px}
+  .diecut::after{
+    content:""; position:absolute; inset:0; border:1.5px dashed var(--gold);
+    opacity:.55; pointer-events:none;
+  }
+  .diecut.round::after{border-radius:50%}
+  .diecut.rect::after{border-radius:12px}
+
+  /* ---------- Sticker A: logo seal ---------- */
+  .seal{
+    width:210px; height:210px; border-radius:50%; overflow:hidden;
+    background:radial-gradient(circle at 50% 42%, #E9B94D 0%, #C98F22 62%, #9E6E14 100%);
+    display:block;
+  }
+  .seal img{width:100%; height:100%; object-fit:cover; display:block}
+
+  /* ---------- coin (small logo) ---------- */
+  .coin{
+    width:96px; height:96px; border-radius:50%; overflow:hidden; flex:none;
+    box-shadow:0 0 0 2px var(--gold), 0 0 0 3px rgba(138,110,47,.4);
+    background:radial-gradient(circle at 50% 42%, #E9B94D 0%, #C98F22 62%, #9E6E14 100%);
+  }
+  .coin img{width:118%; height:118%; object-fit:cover; margin:-9%; display:block}
+
+  /* ---------- Sticker B: label ---------- */
+  .label{
+    width:420px; background:var(--cream); border-radius:12px;
+    border:1.5px solid var(--gold); padding:20px 22px;
+    display:flex; align-items:center; gap:20px;
+  }
+  .label .lbody{flex:1; text-align:center}
+  .label .word{font-family:'Playfair Display',serif; font-style:italic; font-weight:500; font-size:44px; color:var(--ink); line-height:1}
+  .label .tag{font-weight:700; letter-spacing:4px; text-transform:uppercase; font-size:12.5px; color:var(--gold-dark); margin-top:7px}
+  .label hr{border:none; border-top:1px solid var(--gold); width:70%; margin:11px auto}
+  .label .contact{font-weight:600; letter-spacing:1px; font-size:16px; color:var(--ink)}
+  .qr{width:96px; height:96px; flex:none; background:var(--cream); border-radius:6px}
+  .qr svg{width:100%; height:100%; display:block}
+
+  /* ---------- Sticker C: thank-you ---------- */
+  .thanks{
+    width:250px; height:250px; border-radius:50%; background:var(--cream);
+    border:1.5px solid var(--gold); position:relative;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+    padding:14px 30px;
+  }
+  .thanks .coin{width:44px; height:44px}
+  .thanks .baya{font-family:'Caveat',cursive; font-weight:700; font-size:34px; color:var(--gold-dark); line-height:.9; margin-top:3px}
+  .thanks .carelab{font-weight:700; letter-spacing:3px; font-size:10px; color:var(--gold-dark); margin-top:7px}
+  .thanks .care{font-weight:600; font-size:12px; color:var(--ink); line-height:1.2; margin-top:3px}
+  .thanks .qr{width:48px; height:48px; margin-top:8px}
+  .thanks .site{font-weight:700; letter-spacing:1px; font-size:10px; color:var(--gold-dark); margin-top:3px}
+
+  .note{font-size:14px; color:#6b6459; line-height:1.6}
+  .note b{color:var(--ink)}
+
+  /* ---------- print ---------- */
+  @media print{
+    @page{ size:A4; margin:12mm; }
+    .topbar,.note-card{display:none !important}
+    body{background:#fff}
+    .wrap{max-width:none; padding:0}
+    .card{border:none; padding:0; margin:0 0 14mm; break-inside:avoid}
+    .card > h2,.card > .meta{display:none}
+    .diecut::after{opacity:.4}
+    /* real print sizes */
+    .seal{width:48mm; height:48mm}
+    .label{width:80mm}
+    .label .word{font-size:34px}
+    .thanks{width:60mm; height:60mm; padding:16px 34px}
+    .stage{gap:16mm; justify-content:flex-start}
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Tsetsegly — стикер хэвлэлийн хуудас</h1>
+      <p>Cmd/Ctrl + P дараад "Save as PDF" эсвэл шууд принтерт хэвлэ. Тасархай шугам = тайрах зай.</p>
+    </div>
+    <button class="btn" onclick="window.print()">Хэвлэх / PDF</button>
+  </div>
+
+  <div class="wrap">
+
+    <!-- Sticker A -->
+    <div class="card">
+      <h2>1 · Лого лацан</h2>
+      <p class="meta">Ø 48 мм · дугуй die-cut · алтан фойл эсвэл гялгар цаас · боолт битүүмжлэх гол тэмдэг</p>
+      <div class="stage">
+        <div class="diecut round">
+          <div class="seal"><img src="logo.png" alt="Tsetsegly logo" /></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticker B -->
+    <div class="card">
+      <h2>2 · Лого лейбл + QR</h2>
+      <p class="meta">80 × 45 мм · тэгш өнцөгт · хайрцаг / цүнх / гэрчилгээ · QR → tsetsegly.mn</p>
+      <div class="stage">
+        <div class="diecut rect">
+          <div class="label">
+            <div class="coin"><img src="logo.png" alt="" /></div>
+            <div class="lbody">
+              <div class="word">Tsetsegly</div>
+              <div class="tag">Made to order flowers</div>
+              <hr />
+              <div class="contact">@tsetsegly · EST 2026</div>
+            </div>
+            <div class="qr" aria-label="QR tsetsegly.mn"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticker C -->
+    <div class="card">
+      <h2>3 · Талархал + арчилгаа + QR</h2>
+      <p class="meta">Ø 55 мм · дугуй · дотор карт / боолт · дахин үйлчлүүлэлт нэмэгдүүлнэ</p>
+      <div class="stage">
+        <div class="diecut round">
+          <div class="thanks">
+            <div class="coin"><img src="logo.png" alt="" /></div>
+            <div class="baya">Баярлалаа</div>
+            <div class="carelab">АРЧИЛГАА</div>
+            <div class="care">Ишийг налуу огтолж, усаа<br/>2 хоног тутам солиорой</div>
+            <div class="qr thanks-qr" aria-label="QR tsetsegly.mn"></div>
+            <div class="site">tsetsegly.mn</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card note-card">
+      <h2>Тэмдэглэл</h2>
+      <p class="note">
+        · Бүх QR код <b>tsetsegly.mn</b> руу шууд ордог — утсаараа сканддаж шалгаж болно.<br/>
+        · Хэвлэхийн өмнө <b>3 мм bleed</b> нэмүүлж, тайралтын зайг үлдээ.<br/>
+        · Лацан (1)-ийг <b>алтан фойл</b>-оор хэвлүүлбэл хамгийн тансаг харагдана.<br/>
+        · <b>EST 2026</b> он лейбл болон талархал дээр орсон. Лого дотор шингээх бол эх зургийг засах шаардлагатай — хүсвэл хийж өгье.
+      </p>
+    </div>
+
+  </div>
+
+<script>
+  var qrSvg = '<svg viewBox="0 0 33 33" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect width="33" height="33" fill="#FAF7F2"/><path fill="none" stroke="#1A1A1A" stroke-width="1" d="M4 4.5h7m2 0h1m1 0h1m1 0h1m4 0h7M4 5.5h1m5 0h1m2 0h8m1 0h1m5 0h1M4 6.5h1m1 0h3m1 0h1m1 0h3m1 0h1m2 0h1m2 0h1m1 0h3m1 0h1M4 7.5h1m1 0h3m1 0h1m1 0h2m2 0h3m1 0h1m1 0h1m1 0h3m1 0h1M4 8.5h1m1 0h3m1 0h1m1 0h1m2 0h3m2 0h1m1 0h1m1 0h3m1 0h1M4 9.5h1m5 0h1m1 0h1m2 0h2m1 0h2m2 0h1m5 0h1M4 10.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M12 11.5h1m1 0h2m2 0h3M4 12.5h1m1 0h5m2 0h3m1 0h2m3 0h5M5 13.5h1m1 0h1m3 0h1m1 0h1m1 0h3m2 0h2m1 0h1m3 0h1M4 14.5h1m4 0h2m1 0h9m1 0h1m2 0h1m1 0h2M4 15.5h1m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m3 0h2m1 0h1m4 0h1M10 16.5h2m7 0h1m1 0h4m1 0h3M4 17.5h2m10 0h2m2 0h1m2 0h1m1 0h1m1 0h1M4 18.5h1m1 0h1m2 0h4m1 0h1m2 0h9m1 0h2M4 19.5h1m2 0h2m3 0h1m1 0h1m1 0h2m1 0h6m3 0h1M4 20.5h1m1 0h3m1 0h2m4 0h1m1 0h7m1 0h1M12 21.5h3m4 0h2m3 0h2M4 22.5h7m3 0h3m3 0h1m1 0h1m1 0h1m1 0h3M4 23.5h1m5 0h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1M4 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m3 0h6m1 0h3M4 25.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h3m1 0h3m1 0h5M4 26.5h1m1 0h3m1 0h1m1 0h3m2 0h3m1 0h1m3 0h2m1 0h1M4 27.5h1m5 0h1m3 0h1m1 0h2m2 0h6m2 0h1M4 28.5h7m1 0h1m1 0h1m1 0h1m1 0h1m3 0h7"/></svg>';
+  document.querySelectorAll('.qr').forEach(function(el){ el.innerHTML = qrSvg; });
+</script>
+</body>
+</html>

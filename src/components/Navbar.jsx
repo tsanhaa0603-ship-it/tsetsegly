@@ -17,8 +17,13 @@ export default function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-cream/90 backdrop-blur-sm border-b border-gold-light/60">
       <nav className="max-w-6xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="font-playfair italic text-2xl tracking-wide gold-text select-none">
-          Tsetsegly
+        <Link to="/" className="flex items-center gap-2.5 select-none">
+          <img
+            src="/logo.png"
+            alt="Tsetsegly"
+            className="w-9 h-9 rounded-full object-cover ring-1 ring-gold-mid/40 shadow-sm"
+          />
+          <span className="font-playfair italic text-2xl tracking-wide gold-text">Tsetsegly</span>
         </Link>
 
         {/* Desktop nav */}
