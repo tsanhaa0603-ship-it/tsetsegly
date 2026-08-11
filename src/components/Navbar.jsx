@@ -22,6 +22,7 @@ export default function Navbar() {
             src="/logo.png"
             alt="Tsetsegly"
             className="w-9 h-9 rounded-full object-cover ring-1 ring-gold-mid/40 shadow-sm"
+            style={{ backgroundColor: '#17392B' }}
           />
           <span className="font-playfair italic text-2xl tracking-wide gold-text">Tsetsegly</span>
         </Link>

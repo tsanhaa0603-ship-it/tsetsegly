@@ -48,6 +48,7 @@ export default function Hero() {
           src="/logo.png"
           alt="Tsetsegly"
           className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover mx-auto mb-7 ring-1 ring-gold-mid/40 shadow-lg"
+          style={{ backgroundColor: '#17392B' }}
         />
 
         {/* Eyebrow label */}
