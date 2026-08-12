@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# Хувийн бэлгийн хуудас (захидал, зураг агуулдаг) индексжүүлэхгүй
+Disallow: /gift/
+# Админ хэсэг
+Disallow: /admin
+
 Sitemap: https://tsetsegly.mn/sitemap.xml
