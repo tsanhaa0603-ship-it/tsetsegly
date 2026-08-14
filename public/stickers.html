@@ -4,9 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Tsetsegly — Стикер хэвлэлийн хуудас</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Caveat:wght@500;600;700&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet" />
+<!-- Локал фонт (scripts/fetch-fonts.mjs) — хэвлэлийн PDF сүлжээнээс хамаарахгүй байх ёстой -->
+<link rel="stylesheet" href="fonts/fonts.css" />
 <style>
   :root{
     --cream:#FAF7F2; --gold-light:#F4EBD3; --gold:#C9A961; --gold-dark:#8A6E2F; --ink:#1A1A1A;
@@ -133,20 +132,31 @@
 
   @media print{
     @page{ size:A4; margin:12mm; }
-    .topbar,.note-card{display:none !important}
+    .topbar{display:none !important}
     body{background:#fff}
     .wrap{max-width:none; padding:0}
-    .card{border:none; padding:0; margin:0 0 14mm; break-inside:avoid}
-    .card > h2,.card > .meta{display:none}
-    .diecut::after{opacity:.4}
-    .s1{width:48mm; height:48mm}
-    .label{width:80mm}
-    .label .word{font-size:34px}
-    .thanks{width:60mm; height:60mm; padding:16px 32px}
-    .giftnote{width:90mm}
-    .checker{background:none; padding:7px}
-    .square{width:90mm; height:55mm}
-    .stage{gap:16mm; justify-content:flex-start}
+    .card{border:none; padding:0; margin:0 0 11mm; break-inside:avoid}
+
+    /* Гарчиг, хэмжээ, тэмдэглэлийг хэвлэнэ — хэвлэлийн үйлдвэрт хэмжээ, материал,
+       bleed-ийн мэдээлэл заавал хэрэгтэй. Зүсэх шугамын гадна, жижгээр гарна. */
+    .card > h2{font-size:10.5px; letter-spacing:1.5px; margin:0 0 2px}
+    .card > .meta{font-size:11px; margin:0 0 7px}
+    .stage{gap:12mm; justify-content:flex-start}
+    .diecut::after{opacity:.5}
+
+    /* Зохиомж нь px-ээр зурагдсан тул зөвхөн гадна хүрээг нь жижигрүүлбэл QR, текст
+       нь дагаж жижгэрэхгүй, гадагш халина. Иймд бүтэн блокийг zoom-оор пропорциональ
+       богиносгоно — zoom нь layout-д нөлөөлдөг тул зүсэх шугам агуулгаа зөв тойрно.
+       zoom = зорилтот өргөн / зурсан өргөн · 1 мм = 3.7795 px */
+    .sc-seal{zoom:.864}   /* 210 px → 48 мм */
+    .sc-label{zoom:.720}  /* 420 px → 80 мм */
+    .sc-thanks{zoom:.907} /* 250 px → 60 мм */
+    .sc-note{zoom:.773}   /* 440 px → 90 мм */
+    .sc-word{zoom:.773}   /* 440 px → 90 мм */
+
+    .checker{background:none; padding:0}
+    .note-card{break-before:page}
+    .note-card > h2{font-size:11px}
   }
 </style>
 </head>
@@ -166,7 +176,7 @@
       <h2>1 · Лого лацан — гүн ногоон дэвсгэр</h2>
       <p class="meta">Ø 48 мм · ногоон + алт · боолт битүүмжлэх гол тэмдэг · EST 2026</p>
       <div class="stage">
-        <div class="diecut round">
+        <div class="diecut round sc-seal">
           <div class="s1">
             <img class="s1logo" src="logo.png" alt="Tsetsegly" />
             <svg class="s1ring" viewBox="0 0 210 210" xmlns="http://www.w3.org/2000/svg">
@@ -182,9 +192,9 @@
     <!-- Sticker 2 -->
     <div class="card">
       <h2>2 · Лого лейбл + QR — цайвар, лого гүн ногоон дэвсгэр дээр</h2>
-      <p class="meta">80 × 45 мм · хайрцаг / цүнх / гэрчилгээ · QR → tsetsegly.mn</p>
+      <p class="meta">80 × 32 мм · хайрцаг / цүнх / гэрчилгээ · QR → tsetsegly.mn</p>
       <div class="stage">
-        <div class="diecut rect">
+        <div class="diecut rect sc-label">
           <div class="label">
             <div class="coin"><img src="logo.png" alt="" /></div>
             <div class="lbody">
@@ -204,7 +214,7 @@
       <h2>3 · Талархал + арчилгаа + QR — цайвар, лого ногоон, гар бичмэл</h2>
       <p class="meta">Ø 60 мм · дотор карт / боолт · арчилгааны текст гар бичмэл фонтоор</p>
       <div class="stage">
-        <div class="diecut round">
+        <div class="diecut round sc-thanks">
           <div class="thanks">
             <div class="coin"><img src="logo.png" alt="" /></div>
             <div class="baya">Баярлалаа</div>
@@ -220,9 +230,9 @@
     <!-- Sticker 4 -->
     <div class="card">
       <h2>4 · Бэлгийн бичиг — гараар бичих стикер</h2>
-      <p class="meta">90 × 55 мм · баглаанд наах хувийн мессеж · Хэнээс–Хэнд гараар бичнэ</p>
+      <p class="meta">90 × 40 мм · баглаанд наах хувийн мессеж · Хэнээс–Хэнд гараар бичнэ</p>
       <div class="stage">
-        <div class="diecut rect">
+        <div class="diecut rect sc-note">
           <div class="giftnote">
             <div class="gn-head">
               <div class="coin"><img src="logo.png" alt="" /></div>
@@ -242,7 +252,7 @@
       <p class="meta">90 × 55 мм · тунгалаг винил (clear) · логогүй, зөвхөн хар бичиг · шатрын хээ = тунгалаг гэсэн үг, хэвлэгдэхгүй</p>
       <div class="stage">
         <div class="checker">
-          <div class="diecut rect">
+          <div class="diecut rect sc-word">
             <div class="square">
               <div class="word">Tsetsegly</div>
               <div class="rule"></div>

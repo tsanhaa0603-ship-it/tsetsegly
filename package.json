@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "fonts": "node scripts/fetch-fonts.mjs",
+    "print:pdf": "node scripts/build-print-pdfs.mjs"
   },
   "dependencies": {
     "react": "^19.2.6",
