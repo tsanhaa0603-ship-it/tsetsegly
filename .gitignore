@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code plugin файлууд (апп-тай хамаагүй)
+.agents/
+skills-lock.json
+.claude/skills/
