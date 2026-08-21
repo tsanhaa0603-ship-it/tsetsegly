@@ -73,7 +73,7 @@ function LivePreview({ shapeId, wrappingId, wrappings }) {
           <div className="flex items-center gap-2 rounded-lg px-3 py-1.5" style={{ background: 'rgba(201,169,97,0.08)' }}>
             <WrapVisual
               wrap={wrap}
-              className="w-6 h-6 rounded-md object-cover border border-white/60 shadow-sm flex-shrink-0"
+              className="w-9 h-6 rounded-md object-cover border border-white/60 shadow-sm flex-shrink-0"
             />
             <span className="font-cormorant text-sm text-ink/70 truncate">{wrap.name}</span>
             <span className="font-cormorant text-xs text-ink/35 ml-auto flex-shrink-0">+{fmt(wrap.price)}</span>
@@ -200,23 +200,12 @@ export default function Step2Wrapping({
                         : 'border-gold-light/50 hover:border-gold-mid/70 shadow-sm'
                     }`}
                   >
-                    {/* Зураг — картыг дүүргэнэ */}
-                    <div className="relative aspect-[4/5] overflow-hidden" style={{ background: '#FAF7F2' }}>
+                    {/* Зураг — харьцаа нь зурагтай тааруулсан тул бүтнээрээ харагдана */}
+                    <div className="relative aspect-[7/5] overflow-hidden" style={{ background: '#FAF7F2' }}>
                       <WrapVisual
                         wrap={w}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
-
-                      {/* Доод хэсэгт нэр, үнэ (уншигдахуйц бараан налуу) */}
-                      <div
-                        className="absolute inset-x-0 bottom-0 px-3 pt-8 pb-2.5"
-                        style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.35) 55%, transparent)' }}
-                      >
-                        <p className="font-playfair text-sm text-white leading-tight drop-shadow">{w.name}</p>
-                        <p className="font-cormorant text-xs mt-0.5" style={{ color: '#F4EBD3' }}>
-                          +{fmt(w.price)}
-                        </p>
-                      </div>
 
                       {/* Сонгосон тэмдэг */}
                       {active && (
@@ -225,6 +214,14 @@ export default function Step2Wrapping({
                           ✓
                         </div>
                       )}
+                    </div>
+
+                    {/* Нэр, үнэ — зургийн доор (зургийг халхлахгүй) */}
+                    <div className="px-3 py-2.5" style={{ background: active ? 'linear-gradient(160deg, #FFFDF8, #FEF6E4)' : '#FFFFFF' }}>
+                      <p className="font-playfair text-sm text-ink leading-tight truncate">{w.name}</p>
+                      <p className="font-cormorant text-xs mt-0.5" style={{ color: '#8A6E2F' }}>
+                        +{fmt(w.price)}
+                      </p>
                     </div>
                   </button>
                 )

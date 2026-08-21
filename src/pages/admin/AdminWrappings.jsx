@@ -38,7 +38,7 @@ function WrapForm({ initial, isNew, onSave, onCancel }) {
     <div className="rounded-2xl border border-gold-mid/30 p-5 mb-4" style={{ background: 'linear-gradient(160deg, #2A2A2A, #1A1A1A)' }}>
       <div className="flex gap-4 mb-4">
         {/* Зургийн урьдчилан харах */}
-        <div className="w-24 h-32 rounded-xl overflow-hidden flex-shrink-0 border border-gold-mid/20" style={{ background: f.dot }}>
+        <div className="w-28 h-20 rounded-xl overflow-hidden flex-shrink-0 border border-gold-mid/20" style={{ background: f.dot }}>
           {f.image && <img src={f.image} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none' }} />}
         </div>
 
@@ -237,7 +237,7 @@ export default function AdminWrappings() {
                 <div key={w._id}
                   className={`rounded-2xl border p-3 flex items-center gap-3 ${w.active ? 'border-gold-mid/20' : 'border-cream/10 opacity-50'}`}
                   style={{ background: 'linear-gradient(160deg, #232323, #1A1A1A)' }}>
-                  <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0" style={{ background: w.dot || '#2A2A2A' }}>
+                  <div className="w-24 h-16 rounded-xl overflow-hidden flex-shrink-0" style={{ background: w.dot || '#2A2A2A' }}>
                     {w.image && <img src={w.image} alt={w.name} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none' }} />}
                   </div>
                   <div className="flex-1 min-w-0">
