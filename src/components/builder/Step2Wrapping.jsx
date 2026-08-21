@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import { useState } from 'react'
 import WizardNav from './WizardNav'
 import { SHAPES, ShapeSVG } from './BouquetShapes'
 
@@ -12,6 +13,7 @@ export const WRAPPINGS = [
     dot: '#E8DCC4',
     text: '#5C4A2A',
     svgWrap: '#EFE5D0',
+    image: '/wrappings/cream.png',
   },
   {
     id: 'pink',
@@ -22,6 +24,7 @@ export const WRAPPINGS = [
     dot: '#F0A8B4',
     text: '#8C3A50',
     svgWrap: '#F9C8D0',
+    image: '/wrappings/pink.png',
   },
   {
     id: 'black',
@@ -32,6 +35,7 @@ export const WRAPPINGS = [
     dot: '#C9A961',
     text: '#C9A961',
     svgWrap: '#2A2A2A',
+    image: '/wrappings/black.png',
   },
   {
     id: 'green',
@@ -42,8 +46,34 @@ export const WRAPPINGS = [
     dot: '#6A9950',
     text: '#2D5A1B',
     svgWrap: '#B0CFA0',
+    image: '/wrappings/green.png',
   },
 ]
+
+/* Боолтын зураг — файл байхгүй бол өнгөт "цаасны" загвар руу шилжинэ */
+function WrapVisual({ wrap, className = '', dotsClassName = '' }) {
+  const [failed, setFailed] = useState(false)
+
+  if (wrap.image && !failed) {
+    return (
+      <img
+        src={wrap.image}
+        alt={wrap.name}
+        onError={() => setFailed(true)}
+        loading="lazy"
+        className={className}
+      />
+    )
+  }
+  // Fallback: өнгөт цаасны судал
+  return (
+    <div className={`flex gap-1.5 ${dotsClassName}`}>
+      {[0.5, 0.75, 1].map((op, i) => (
+        <div key={i} className="w-2.5 h-8 rounded-full" style={{ backgroundColor: wrap.dot, opacity: op }} />
+      ))}
+    </div>
+  )
+}
 
 /* ─── Live Preview Panel ─── */
 function LivePreview({ shapeId, wrappingId }) {
@@ -96,10 +126,13 @@ function LivePreview({ shapeId, wrappingId }) {
         {wrappingId && (
           <div className="flex items-center gap-2 rounded-lg px-3 py-1.5"
             style={{ background: 'rgba(201,169,97,0.08)' }}>
-            <span
-              className="w-3 h-3 rounded-full border border-white/60 shadow-sm flex-shrink-0"
-              style={{ background: wrap?.dot }}
-            />
+            {wrap && (
+              <WrapVisual
+                wrap={wrap}
+                className="w-5 h-5 rounded-md object-cover border border-white/60 shadow-sm flex-shrink-0"
+                dotsClassName="flex-shrink-0 scale-[0.35] -mx-2"
+              />
+            )}
             <span className="font-cormorant text-sm text-ink/70">{wrap?.name}</span>
             <span className="font-cormorant text-xs text-ink/35 ml-auto">+₮{wrap?.price?.toLocaleString()}</span>
           </div>
@@ -212,11 +245,12 @@ export default function Step2Wrapping({ selectedShape, onChangeShape, selected, 
                         ✓
                       </div>
                     )}
-                    {/* Paper texture */}
-                    <div className="mb-3 flex gap-1.5">
-                      {[0.5, 0.75, 1].map((op, i) => (
-                        <div key={i} className="w-2.5 h-8 rounded-full" style={{ backgroundColor: w.dot, opacity: op }} />
-                      ))}
+                    {/* Боолтын зураг (байхгүй бол өнгөт судал) */}
+                    <div className="mb-3">
+                      <WrapVisual
+                        wrap={w}
+                        className="w-full h-20 object-cover rounded-xl shadow-sm"
+                      />
                     </div>
                     <p className="font-playfair text-sm" style={{ color: w.text }}>{w.name}</p>
                     <p className="font-cormorant text-xs mt-0.5 opacity-65" style={{ color: w.text }}>{w.desc}</p>
