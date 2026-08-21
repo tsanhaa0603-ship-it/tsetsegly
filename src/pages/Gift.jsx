@@ -239,6 +239,7 @@ export default function Gift() {
                 <div className="flex-shrink-0">
                   <ShapeSVG
                     id={data.shape}
+                    design={shapeItem?.design}
                     bloom="#DDACAB"
                     wrap={wrapItem?.svgWrap ?? '#EFE5D0'}
                     ribbon={ribbonItem?.color ?? '#C9A961'}

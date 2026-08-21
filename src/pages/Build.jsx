@@ -5,9 +5,10 @@ import Step1Flowers from '../components/builder/Step1Flowers'
 import Step2Wrapping from '../components/builder/Step2Wrapping'
 import Step3Ribbon from '../components/builder/Step3Ribbon'
 import Step4Summary from '../components/builder/Step4Summary'
-import { fetchFlowers, fetchWrappings } from '../lib/api'
+import { fetchFlowers, fetchWrappings, fetchShapes } from '../lib/api'
 import { DEFAULT_CATALOG } from '../lib/flowers'
 import { DEFAULT_WRAPPINGS } from '../lib/wrappings'
+import { DEFAULT_SHAPES } from '../lib/shapes'
 
 const TOTAL_STEPS = 4
 
@@ -18,12 +19,14 @@ export default function Build() {
   const [step, setStep] = useState(location.state?.startStep || 1)
   const [catalog, setCatalog] = useState(DEFAULT_CATALOG)
   const [wrappings, setWrappings] = useState(DEFAULT_WRAPPINGS)
+  const [shapes, setShapes] = useState(DEFAULT_SHAPES)
 
   // Цэцгийн каталогийг backend-аас татна (амжилтгүй бол default)
   useEffect(() => {
     let active = true
     fetchFlowers().then((c) => { if (active) setCatalog(c) })
     fetchWrappings().then((w) => { if (active) setWrappings(w) })
+    fetchShapes().then((s) => { if (active) setShapes(s) })
     return () => { active = false }
   }, [])
   const [order, setOrder] = useState(() => ({
@@ -88,6 +91,7 @@ export default function Build() {
               selected={order.wrapping}
               onChange={(wrapping) => setOrder((o) => ({ ...o, wrapping }))}
               wrappings={wrappings}
+              shapes={shapes}
               onNext={next}
               onPrev={prev}
             />
@@ -107,6 +111,7 @@ export default function Build() {
               order={order}
               catalog={catalog}
               wrappings={wrappings}
+              shapes={shapes}
               onChange={(fields) => setOrder((o) => ({ ...o, ...fields }))}
               onPrev={prev}
             />

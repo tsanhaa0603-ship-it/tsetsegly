@@ -4,6 +4,7 @@
 ───────────────────────────────────────────── */
 import { DEFAULT_CATALOG, flattenCatalog } from './flowers'
 import { DEFAULT_WRAPPINGS } from './wrappings'
+import { DEFAULT_SHAPES } from './shapes'
 
 const API = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '')
 
@@ -278,6 +279,62 @@ export async function updateWrapping(mongoId, payload) {
 
 export async function deleteWrapping(mongoId) {
   const res = await fetch(`${API}/api/wrappings/${mongoId}`, {
+    method: 'DELETE',
+    headers: authHeader(),
+  })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) throw new Error('Устгахад алдаа гарлаа')
+  return res.json()
+}
+
+/* ── Баглааны хэлбэр ── */
+/* GET /api/shapes — public. Амжилтгүй бол DEFAULT_SHAPES. */
+export async function fetchShapes() {
+  try {
+    const res = await fetch(`${API}/api/shapes`)
+    if (!res.ok) return DEFAULT_SHAPES
+    const data = await res.json()
+    return Array.isArray(data) && data.length ? data : DEFAULT_SHAPES
+  } catch {
+    return DEFAULT_SHAPES
+  }
+}
+
+/* GET /api/shapes/manage — admin бүгд */
+export async function fetchAllShapes() {
+  const res = await fetch(`${API}/api/shapes/manage`, { headers: authHeader() })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) throw new Error('Татахад алдаа гарлаа')
+  return res.json()
+}
+
+export async function createShape(payload) {
+  const res = await fetch(`${API}/api/shapes`, {
+    method: 'POST',
+    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}))
+    throw new Error(e.error || 'Үүсгэхэд алдаа гарлаа')
+  }
+  return res.json()
+}
+
+export async function updateShape(mongoId, payload) {
+  const res = await fetch(`${API}/api/shapes/${mongoId}`, {
+    method: 'PATCH',
+    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) throw new Error('Шинэчлэхэд алдаа гарлаа')
+  return res.json()
+}
+
+export async function deleteShape(mongoId) {
+  const res = await fetch(`${API}/api/shapes/${mongoId}`, {
     method: 'DELETE',
     headers: authHeader(),
   })

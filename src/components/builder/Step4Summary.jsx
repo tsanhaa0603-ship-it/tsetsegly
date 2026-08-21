@@ -11,7 +11,8 @@ function fmt(n) {
   return '₮' + n.toLocaleString('mn-MN')
 }
 
-export default function Step4Summary({ order, catalog, wrappings, onChange, onPrev }) {
+export default function Step4Summary({ order, catalog, wrappings, shapes, onChange, onPrev }) {
+  const shapeList = shapes?.length ? shapes : SHAPES
   const wrapList = wrappings?.length ? wrappings : WRAPPINGS
   const [submitted, setSubmitted] = useState(false)
   const [errors, setErrors] = useState({})
@@ -217,13 +218,14 @@ export default function Step4Summary({ order, catalog, wrappings, onChange, onPr
 
         {/* Shape */}
         {order.shape && (() => {
-          const shapeItem = SHAPES.find((s) => s.id === order.shape)
+          const shapeItem = shapeList.find((s) => s.id === order.shape)
           const wrapItem  = wrapList.find((w) => w.id === order.wrapping)
           return (
             <div className="px-5 py-4 border-b border-gold-light/60 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <ShapeSVG
                   id={order.shape}
+                  design={shapeItem?.design}
                   bloom="#DDACAB"
                   wrap={wrapItem?.svgWrap ?? '#EFE5D0'}
                   ribbon="#C9A961"

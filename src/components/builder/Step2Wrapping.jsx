@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import WizardNav from './WizardNav'
-import { SHAPES, ShapeSVG } from './BouquetShapes'
+import { ShapeSVG } from './BouquetShapes'
+import { DEFAULT_SHAPES } from '../../lib/shapes'
 import { DEFAULT_WRAPPINGS, WRAP_CATEGORIES } from '../../lib/wrappings'
 
 function fmt(n) {
@@ -26,8 +27,8 @@ function WrapVisual({ wrap, className = '', fallbackClassName = '' }) {
 }
 
 /* ─── Live Preview Panel ─── */
-function LivePreview({ shapeId, wrappingId, wrappings }) {
-  const shape = SHAPES.find((s) => s.id === shapeId)
+function LivePreview({ shapeId, wrappingId, wrappings, shapes }) {
+  const shape = shapes.find((s) => s.id === shapeId)
   const wrap = wrappings.find((w) => w.id === wrappingId)
 
   return (
@@ -45,6 +46,7 @@ function LivePreview({ shapeId, wrappingId, wrappings }) {
         {shapeId ? (
           <ShapeSVG
             id={shapeId}
+            design={shape?.design}
             bloom="#DDACAB"
             wrap={wrap?.svgWrap ?? '#EFE5D0'}
             ribbon="#C9A961"
@@ -91,9 +93,10 @@ function LivePreview({ shapeId, wrappingId, wrappings }) {
 
 /* ─── Main Component ─── */
 export default function Step2Wrapping({
-  selectedShape, onChangeShape, selected, onChange, onNext, onPrev, wrappings,
+  selectedShape, onChangeShape, selected, onChange, onNext, onPrev, wrappings, shapes,
 }) {
   const catalog = wrappings?.length ? wrappings : DEFAULT_WRAPPINGS
+  const shapeList = shapes?.length ? shapes : DEFAULT_SHAPES
   const [cat, setCat] = useState('all')
   const canProceed = selectedShape && selected
 
@@ -119,8 +122,8 @@ export default function Step2Wrapping({
               <p className="font-cormorant text-ink/50 mt-0.5">Баглаагаа яаж зохиолгохыг сонгоно уу</p>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-              {SHAPES.map((shape) => {
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+              {shapeList.map((shape) => {
                 const active = selectedShape === shape.id
                 return (
                   <button
@@ -141,6 +144,7 @@ export default function Step2Wrapping({
                     )}
                     <ShapeSVG
                       id={shape.id}
+                      design={shape.design}
                       bloom={active ? '#D4948E' : '#CDAAAA'}
                       wrap={active ? '#E0D0B8' : '#DDD4C2'}
                       ribbon={active ? '#C9A961' : '#C9A96180'}
@@ -235,7 +239,7 @@ export default function Step2Wrapping({
           <p className="font-cormorant tracking-widest text-xs uppercase text-ink/40 mb-2 text-center lg:hidden">
             Урьдчилан харах
           </p>
-          <LivePreview shapeId={selectedShape} wrappingId={selected} wrappings={catalog} />
+          <LivePreview shapeId={selectedShape} wrappingId={selected} wrappings={catalog} shapes={shapeList} />
         </div>
       </div>
 

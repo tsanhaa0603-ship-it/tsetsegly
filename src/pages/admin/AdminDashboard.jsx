@@ -130,6 +130,12 @@ export default function AdminDashboard() {
               🎀 Боолт
             </Link>
             <Link
+              to="/admin/shapes"
+              className="font-cormorant text-sm tracking-widest uppercase text-cream/50 hover:text-cream transition-colors"
+            >
+              💠 Хэлбэр
+            </Link>
+            <Link
               to="/admin/flowers"
               className="font-cormorant text-sm tracking-widest uppercase text-cream/50 hover:text-cream transition-colors"
             >

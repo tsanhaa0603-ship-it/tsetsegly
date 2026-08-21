@@ -1,261 +1,333 @@
 /* eslint-disable react-refresh/only-export-components */
 /* ─────────────────────────────────────────────
-   Bouquet shape definitions + SVG components
-   All SVGs use viewBox="0 0 80 100"
-   Props: bloom, wrap, ribbon
+   Баглааны хэлбэрийн SVG зураг
+   viewBox="0 0 80 100", props: bloom, wrap, ribbon
+
+   Дахин ашиглах хэсгүүд (Bloom, Leaf, Cone, Bow) дээр
+   суурилсан тул хэлбэрүүд нэгдмэл, бодитой харагдана.
 ───────────────────────────────────────────── */
 
 const LEAF = '#7FAB7A'
+const LEAF_DARK = '#5F8C5C'
 
-export const SHAPES = [
-  {
-    id: 'round',
-    name: 'Бөөрөнхий',
-    desc: 'Сонгодог дугариг хэлбэр',
-    en: 'Round bouquet',
-  },
-  {
-    id: 'cascade',
-    name: 'Урсгал',
-    desc: 'Доош гоёмсогоор урсах',
-    en: 'Cascade',
-  },
-  {
-    id: 'garden',
-    name: 'Задгай',
-    desc: 'Чөлөөт байгалийн аяс',
-    en: 'Garden style',
-  },
-  {
-    id: 'single',
-    name: 'Нэг цэцэг',
-    desc: 'Минималист, цэвэр',
-    en: 'Single stem',
-  },
-  {
-    id: 'posy',
-    name: 'Поси',
-    desc: 'Нягт авсаархан жижиг',
-    en: 'Posy / Nosegay',
-  },
-  {
-    id: 'fan',
-    name: 'Дэлгэр',
-    desc: 'Өргөн, баян дэлгэрэнгүй',
-    en: 'Fan / Sheaf',
-  },
+/* ── Нэг цэцэг: дэлбээ + гол ── */
+function Bloom({ cx, cy, r, fill, petals = 6, rot = 0, dim = 0 }) {
+  const items = []
+  for (let i = 0; i < petals; i++) {
+    const a = rot + (i * 360) / petals
+    const rad = ((a - 90) * Math.PI) / 180
+    const px = cx + r * 0.5 * Math.cos(rad)
+    const py = cy + r * 0.5 * Math.sin(rad)
+    items.push(
+      <ellipse
+        key={i}
+        cx={px} cy={py}
+        rx={r * 0.46} ry={r * 0.6}
+        transform={`rotate(${a} ${px} ${py})`}
+        fill={fill}
+      />
+    )
+  }
+  return (
+    <g>
+      {items}
+      {/* гүнзгийрүүлэх сүүдэр */}
+      <circle cx={cx} cy={cy} r={r * 0.42} fill="#000" opacity={0.1 + dim * 0.12} />
+      {/* гол */}
+      <circle cx={cx} cy={cy} r={r * 0.26} fill="#fff" opacity={0.4} />
+      {dim > 0 && <circle cx={cx} cy={cy} r={r} fill="#000" opacity={dim * 0.18} />}
+    </g>
+  )
+}
+
+/* ── Навч ── */
+function Leaf({ x, y, len = 12, w = 4.5, rot = 0, fill = LEAF, opacity = 0.85 }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${rot})`} opacity={opacity}>
+      <path d={`M0 0 Q ${len * 0.5} ${-w} ${len} 0 Q ${len * 0.5} ${w} 0 0 Z`} fill={fill} />
+      <path d={`M1 0 L ${len - 1} 0`} stroke="#000" strokeOpacity="0.12" strokeWidth="0.6" />
+    </g>
+  )
+}
+
+/* ── Боолтын конус ── */
+function Cone({ topW = 22, botW = 13, top = 58, bot = 92, cx = 40, fill }) {
+  const tl = cx - topW / 2, tr = cx + topW / 2
+  const bl = cx - botW / 2, br = cx + botW / 2
+  return (
+    <g>
+      <path d={`M${tl} ${top} Q ${cx} ${top + 3} ${tr} ${top} L ${br} ${bot} Q ${cx} ${bot + 2.5} ${bl} ${bot} Z`} fill={fill} />
+      {/* атираа */}
+      <path d={`M${cx} ${top + 2} L ${cx - 1} ${bot}`} stroke="#000" strokeOpacity="0.10" strokeWidth="0.9" />
+      <path d={`M${tl + 3} ${top + 1} L ${bl + 2} ${bot - 1}`} stroke="#fff" strokeOpacity="0.18" strokeWidth="0.9" />
+      {/* доод сүүдэр */}
+      <path d={`M${bl} ${bot - 6} L ${br} ${bot - 6} L ${br} ${bot} Q ${cx} ${bot + 2.5} ${bl} ${bot} Z`} fill="#000" opacity="0.07" />
+    </g>
+  )
+}
+
+/* ── Туузны уяа ── */
+function Bow({ cx = 40, cy = 60, s = 1, fill }) {
+  return (
+    <g transform={`translate(${cx} ${cy}) scale(${s})`}>
+      {/* сүүл */}
+      <path d="M-1.5 2 L -6 12 L -2.5 11 L 0 3 Z" fill={fill} opacity="0.85" />
+      <path d="M1.5 2 L 6 12 L 2.5 11 L 0 3 Z" fill={fill} opacity="0.85" />
+      {/* гогцоо */}
+      <ellipse cx="-5.5" cy="0" rx="5.5" ry="3.6" transform="rotate(-18 -5.5 0)" fill={fill} />
+      <ellipse cx="5.5" cy="0" rx="5.5" ry="3.6" transform="rotate(18 5.5 0)" fill={fill} />
+      <ellipse cx="-5.5" cy="0" rx="2.6" ry="1.7" transform="rotate(-18 -5.5 0)" fill="#000" opacity="0.12" />
+      <ellipse cx="5.5" cy="0" rx="2.6" ry="1.7" transform="rotate(18 5.5 0)" fill="#000" opacity="0.12" />
+      {/* зангилаа */}
+      <circle cx="0" cy="0" r="2.5" fill={fill} />
+      <circle cx="0" cy="0" r="2.5" fill="#fff" opacity="0.18" />
+    </g>
+  )
+}
+
+/* ═══════════ Хэлбэрүүд ═══════════ */
+
+/* Бөөрөнхий — нягт дугуй бөмбөлөг */
+function RoundDesign({ bloom, wrap, ribbon }) {
+  return (
+    <>
+      <Cone fill={wrap} top={56} bot={92} topW={26} botW={14} />
+      {/* арын навчнууд */}
+      <Leaf x={20} y={46} len={15} rot={205} opacity={0.7} fill={LEAF_DARK} />
+      <Leaf x={60} y={46} len={15} rot={-25} opacity={0.7} fill={LEAF_DARK} />
+      <Leaf x={26} y={54} len={12} rot={165} opacity={0.6} />
+      <Leaf x={54} y={54} len={12} rot={15} opacity={0.6} />
+      {/* арын эгнээ (бүдэг) */}
+      <Bloom cx={22} cy={34} r={10} fill={bloom} dim={0.5} rot={12} />
+      <Bloom cx={58} cy={34} r={10} fill={bloom} dim={0.5} rot={-8} />
+      <Bloom cx={40} cy={22} r={10} fill={bloom} dim={0.35} rot={20} />
+      {/* урд эгнээ */}
+      <Bloom cx={30} cy={44} r={11} fill={bloom} rot={0} />
+      <Bloom cx={50} cy={44} r={11} fill={bloom} rot={25} />
+      <Bloom cx={40} cy={34} r={12} fill={bloom} rot={10} />
+      <Bow cx={40} cy={59} s={1.1} fill={ribbon} />
+    </>
+  )
+}
+
+/* Урсгал — доош гоёмсог урсдаг */
+function CascadeDesign({ bloom, wrap, ribbon }) {
+  return (
+    <>
+      <Cone fill={wrap} top={48} bot={78} topW={22} botW={12} cx={33} />
+      <Leaf x={16} y={38} len={14} rot={200} opacity={0.7} fill={LEAF_DARK} />
+      <Leaf x={48} y={40} len={13} rot={-20} opacity={0.6} />
+      {/* дээд бөөгнөрөл */}
+      <Bloom cx={22} cy={28} r={9.5} fill={bloom} dim={0.45} rot={15} />
+      <Bloom cx={44} cy={26} r={9.5} fill={bloom} dim={0.4} rot={-10} />
+      <Bloom cx={33} cy={18} r={10} fill={bloom} dim={0.2} rot={5} />
+      <Bloom cx={32} cy={33} r={11} fill={bloom} rot={20} />
+      {/* урсах хэсэг */}
+      <Leaf x={44} y={48} len={16} rot={52} opacity={0.75} fill={LEAF_DARK} />
+      <Leaf x={52} y={64} len={14} rot={62} opacity={0.65} fill={LEAF_DARK} />
+      <Bloom cx={50} cy={50} r={8.5} fill={bloom} dim={0.15} rot={30} />
+      <Bloom cx={58} cy={64} r={7} fill={bloom} dim={0.3} rot={0} />
+      <Bloom cx={63} cy={77} r={5.5} fill={bloom} dim={0.45} rot={18} />
+      <Bloom cx={66} cy={88} r={4} fill={bloom} dim={0.6} rot={0} />
+      <Bow cx={33} cy={50} s={1} fill={ribbon} />
+    </>
+  )
+}
+
+/* Задгай — чөлөөт, байгалийн */
+function GardenDesign({ bloom, wrap, ribbon }) {
+  return (
+    <>
+      <Cone fill={wrap} top={60} bot={92} topW={26} botW={14} />
+      {/* өндөр иш */}
+      <path d="M22 56 Q 18 40 14 26" stroke={LEAF_DARK} strokeWidth="1.6" fill="none" strokeLinecap="round" />
+      <path d="M58 56 Q 63 40 67 24" stroke={LEAF_DARK} strokeWidth="1.6" fill="none" strokeLinecap="round" />
+      <path d="M48 56 Q 52 42 55 32" stroke={LEAF} strokeWidth="1.3" fill="none" strokeLinecap="round" />
+      <Bloom cx={14} cy={24} r={6} fill={bloom} dim={0.3} rot={20} />
+      <Bloom cx={67} cy={22} r={5.5} fill={bloom} dim={0.35} rot={0} />
+      <Bloom cx={55} cy={30} r={5} fill={bloom} dim={0.25} rot={40} />
+      {/* навчнууд задгай */}
+      <Leaf x={18} y={48} len={16} rot={215} opacity={0.75} fill={LEAF_DARK} />
+      <Leaf x={62} y={48} len={16} rot={-35} opacity={0.75} fill={LEAF_DARK} />
+      <Leaf x={24} y={58} len={13} rot={170} opacity={0.6} />
+      <Leaf x={56} y={58} len={13} rot={10} opacity={0.6} />
+      {/* тэгш бус бөөгнөрөл */}
+      <Bloom cx={24} cy={44} r={9.5} fill={bloom} dim={0.45} rot={10} />
+      <Bloom cx={56} cy={42} r={9} fill={bloom} dim={0.45} rot={-15} />
+      <Bloom cx={38} cy={30} r={9} fill={bloom} dim={0.3} rot={25} />
+      <Bloom cx={33} cy={46} r={11} fill={bloom} rot={0} />
+      <Bloom cx={48} cy={50} r={9.5} fill={bloom} dim={0.1} rot={30} />
+      <Bow cx={40} cy={63} s={1.1} fill={ribbon} />
+    </>
+  )
+}
+
+/* Нэг цэцэг — минималист */
+function SingleDesign({ bloom, wrap, ribbon }) {
+  return (
+    <>
+      {/* иш */}
+      <path d="M40 34 L 40 88" stroke={LEAF_DARK} strokeWidth="2.2" strokeLinecap="round" />
+      <Cone fill={wrap} top={62} bot={92} topW={17} botW={11} />
+      {/* навч */}
+      <Leaf x={40} y={52} len={15} rot={200} fill={LEAF} opacity={0.9} />
+      <Leaf x={40} y={58} len={12} rot={-20} fill={LEAF} opacity={0.75} />
+      {/* том цэцэг */}
+      <Bloom cx={40} cy={26} r={17} fill={bloom} petals={8} rot={12} />
+      <Bow cx={40} cy={65} s={1} fill={ribbon} />
+    </>
+  )
+}
+
+/* Поси — нягт, авсаархан */
+function PosyDesign({ bloom, wrap, ribbon }) {
+  return (
+    <>
+      <Cone fill={wrap} top={62} bot={86} topW={21} botW={13} />
+      <Leaf x={26} y={56} len={11} rot={195} opacity={0.65} fill={LEAF_DARK} />
+      <Leaf x={54} y={56} len={11} rot={-15} opacity={0.65} fill={LEAF_DARK} />
+      {/* нягт бөөгнөрөл */}
+      <Bloom cx={30} cy={44} r={8.5} fill={bloom} dim={0.4} rot={10} />
+      <Bloom cx={50} cy={44} r={8.5} fill={bloom} dim={0.4} rot={-10} />
+      <Bloom cx={40} cy={36} r={8.5} fill={bloom} dim={0.25} rot={25} />
+      <Bloom cx={34} cy={52} r={8} fill={bloom} dim={0.1} rot={0} />
+      <Bloom cx={46} cy={52} r={8} fill={bloom} dim={0.1} rot={20} />
+      <Bloom cx={40} cy={45} r={9} fill={bloom} rot={15} />
+      <Bow cx={40} cy={65} s={1} fill={ribbon} />
+    </>
+  )
+}
+
+/* Дэлгэр — өргөн дэлгэрсэн боть */
+function FanDesign({ bloom, wrap, ribbon }) {
+  const stems = [
+    { x: 14, y: 30, r: 8 },
+    { x: 27, y: 21, r: 8.5 },
+    { x: 40, y: 17, r: 9 },
+    { x: 53, y: 21, r: 8.5 },
+    { x: 66, y: 30, r: 8 },
+  ]
+  return (
+    <>
+      {/* ишнүүд боолтны амнаас дэлгэрнэ */}
+      {stems.map((s, i) => (
+        <path key={i} d={`M40 62 Q ${(40 + s.x) / 2} ${(62 + s.y) / 2 + 2} ${s.x} ${s.y}`}
+          stroke={LEAF_DARK} strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      ))}
+      {/* навчнууд */}
+      <Leaf x={24} y={44} len={15} rot={215} opacity={0.6} fill={LEAF_DARK} />
+      <Leaf x={56} y={44} len={15} rot={-35} opacity={0.6} fill={LEAF_DARK} />
+      <Leaf x={30} y={54} len={12} rot={195} opacity={0.5} />
+      <Leaf x={50} y={54} len={12} rot={-15} opacity={0.5} />
+      {/* цэцгүүд */}
+      {stems.map((s, i) => (
+        <Bloom key={i} cx={s.x} cy={s.y} r={s.r} fill={bloom} rot={i * 17} dim={i === 2 ? 0 : 0.2} />
+      ))}
+      {/* дунд дүүргэлт — ишнүүдийн уулзвар */}
+      <Bloom cx={33} cy={36} r={7} fill={bloom} dim={0.35} rot={40} />
+      <Bloom cx={47} cy={36} r={7} fill={bloom} dim={0.35} rot={10} />
+      <Cone fill={wrap} top={60} bot={92} topW={24} botW={14} />
+      <Bow cx={40} cy={63} s={1.1} fill={ribbon} />
+    </>
+  )
+}
+
+/* Зүрхэн — зүрх хэлбэрээр өрсөн */
+function HeartDesign({ bloom, wrap, ribbon }) {
+  // зүрхний контур — дээд хонхор тод харагдана
+  const pts = [
+    [40, 26],                            // дундах хонхор
+    [33, 17], [24, 15], [17, 22],        // зүүн дээд гэдэс
+    [17, 32], [24, 42], [32, 50],        // зүүн хажуу
+    [40, 57],                            // доод үзүүр
+    [48, 50], [56, 42], [63, 32],        // баруун хажуу
+    [63, 22], [56, 15], [47, 17],        // баруун дээд гэдэс
+  ]
+  return (
+    <>
+      <Cone fill={wrap} top={62} bot={92} topW={22} botW={13} />
+      <Leaf x={22} y={54} len={13} rot={200} opacity={0.6} fill={LEAF_DARK} />
+      <Leaf x={58} y={54} len={13} rot={-20} opacity={0.6} fill={LEAF_DARK} />
+      {/* дотор дүүргэлт */}
+      <Bloom cx={31} cy={28} r={7.5} fill={bloom} dim={0.42} rot={10} />
+      <Bloom cx={49} cy={28} r={7.5} fill={bloom} dim={0.42} rot={-10} />
+      <Bloom cx={40} cy={37} r={7.5} fill={bloom} dim={0.32} rot={20} />
+      <Bloom cx={33} cy={43} r={7} fill={bloom} dim={0.25} rot={35} />
+      <Bloom cx={47} cy={43} r={7} fill={bloom} dim={0.25} rot={5} />
+      {/* контур */}
+      {pts.map(([x, y], i) => (
+        <Bloom key={i} cx={x} cy={y} r={6.5} fill={bloom} rot={i * 23} dim={i % 3 === 0 ? 0.1 : 0} />
+      ))}
+      <Bow cx={40} cy={65} s={1.1} fill={ribbon} />
+    </>
+  )
+}
+
+/* Том бөмбөрцөг — 101 сарнай маягийн өргөн, нягт баглаа */
+function GrandDesign({ bloom, wrap, ribbon }) {
+  // нягт бөмбөрцөг: эгнээ бүр өргөн, доошлох тусам нарийсна
+  const rows = [
+    { cy: 20, n: 3, rx: 15, r: 7.5, dim: 0.5 },
+    { cy: 30, n: 5, rx: 27, r: 8,   dim: 0.36 },
+    { cy: 41, n: 6, rx: 33, r: 8.5, dim: 0.2 },
+    { cy: 52, n: 5, rx: 27, r: 8.5, dim: 0.05 },
+    { cy: 60, n: 3, rx: 14, r: 8,   dim: 0 },
+  ]
+  return (
+    <>
+      <Cone fill={wrap} top={64} bot={94} topW={34} botW={16} />
+      <Leaf x={10} y={54} len={17} rot={205} opacity={0.65} fill={LEAF_DARK} />
+      <Leaf x={70} y={54} len={17} rot={-25} opacity={0.65} fill={LEAF_DARK} />
+      <Leaf x={20} y={62} len={13} rot={180} opacity={0.5} />
+      <Leaf x={60} y={62} len={13} rot={0} opacity={0.5} />
+      {rows.map((row) =>
+        Array.from({ length: row.n }, (_, i) => {
+          const x = row.n === 1 ? 40 : 40 - row.rx + (i * (row.rx * 2)) / (row.n - 1)
+          return (
+            <Bloom key={`${row.cy}-${i}`} cx={x} cy={row.cy} r={row.r}
+              fill={bloom} dim={row.dim} rot={i * 31 + row.cy} />
+          )
+        })
+      )}
+      <Bow cx={40} cy={67} s={1.2} fill={ribbon} />
+    </>
+  )
+}
+
+/* ── Боломжтой SVG загварууд (admin сонгоно) ── */
+export const SHAPE_DESIGNS = [
+  { key: 'round',   label: 'Бөөрөнхий' },
+  { key: 'cascade', label: 'Урсгал' },
+  { key: 'garden',  label: 'Задгай' },
+  { key: 'single',  label: 'Нэг цэцэг' },
+  { key: 'posy',    label: 'Поси' },
+  { key: 'fan',     label: 'Дэлгэр' },
+  { key: 'heart',   label: 'Зүрхэн' },
+  { key: 'grand',   label: 'Том бөмбөрцөг' },
 ]
 
-/* ── individual shape SVG content (no <svg> wrapper) ── */
-function RoundContent({ bloom, wrap, ribbon }) {
-  return (
-    <>
-      {/* Stem wrap */}
-      <path d="M30 61 L50 61 L46 91 L34 91 Z" fill={wrap} />
-      {/* Ribbon */}
-      <rect x="27" y="57" width="26" height="6" rx="3" fill={ribbon} />
-      {/* Leaves peeking sides */}
-      <ellipse cx="17" cy="52" rx="10" ry="4" transform="rotate(-38 17 52)" fill={LEAF} opacity="0.6" />
-      <ellipse cx="63" cy="52" rx="10" ry="4" transform="rotate(38 63 52)" fill={LEAF} opacity="0.6" />
-      {/* Main dome */}
-      <ellipse cx="40" cy="36" rx="27" ry="24" fill={bloom} />
-      {/* Flower texture – translucent circles */}
-      <circle cx="27" cy="29" r="7.5" fill="white" fillOpacity="0.22" />
-      <circle cx="40" cy="20" r="9"   fill="white" fillOpacity="0.22" />
-      <circle cx="53" cy="29" r="7.5" fill="white" fillOpacity="0.22" />
-      <circle cx="21" cy="43" r="6"   fill="white" fillOpacity="0.17" />
-      <circle cx="59" cy="43" r="6"   fill="white" fillOpacity="0.17" />
-      <circle cx="40" cy="48" r="6.5" fill="white" fillOpacity="0.17" />
-    </>
-  )
+const DESIGNS = {
+  round: RoundDesign,
+  cascade: CascadeDesign,
+  garden: GardenDesign,
+  single: SingleDesign,
+  posy: PosyDesign,
+  fan: FanDesign,
+  heart: HeartDesign,
+  grand: GrandDesign,
 }
 
-function CascadeContent({ bloom, wrap, ribbon }) {
-  return (
-    <>
-      {/* Stem wrap */}
-      <path d="M23 51 L43 51 L39 77 L27 77 Z" fill={wrap} />
-      <rect x="21" y="47" width="24" height="6" rx="3" fill={ribbon} />
-      {/* Leaf */}
-      <ellipse cx="13" cy="42" rx="10" ry="4" transform="rotate(-42 13 42)" fill={LEAF} opacity="0.6" />
-      {/* Main cluster */}
-      <ellipse cx="33" cy="27" rx="23" ry="21" fill={bloom} />
-      {/* Trailing cascade */}
-      <ellipse cx="52" cy="52" rx="15" ry="13" fill={bloom} opacity="0.85" />
-      <ellipse cx="61" cy="70" rx="10.5" ry="9.5" fill={bloom} opacity="0.65" />
-      <ellipse cx="65" cy="85" rx="7"   ry="6.5" fill={bloom} opacity="0.45" />
-      <ellipse cx="67" cy="96" rx="4.5" ry="4"   fill={bloom} opacity="0.25" />
-      {/* Flower textures on main */}
-      <circle cx="23" cy="22" r="7.5" fill="white" fillOpacity="0.22" />
-      <circle cx="36" cy="14" r="8.5" fill="white" fillOpacity="0.22" />
-      <circle cx="48" cy="24" r="7"   fill="white" fillOpacity="0.22" />
-      <circle cx="26" cy="38" r="5.5" fill="white" fillOpacity="0.17" />
-      {/* Small texture on trail */}
-      <circle cx="52" cy="50" r="5"   fill="white" fillOpacity="0.18" />
-      <circle cx="61" cy="68" r="4"   fill="white" fillOpacity="0.15" />
-    </>
-  )
-}
-
-function GardenContent({ bloom, wrap, ribbon }) {
-  return (
-    <>
-      {/* Stem wrap */}
-      <path d="M29 63 L51 63 L47 89 L33 89 Z" fill={wrap} />
-      <rect x="26" y="59" width="28" height="6" rx="3" fill={ribbon} />
-      {/* Organic blob */}
-      <path
-        d="M14 53 C10 37 16 15 32 8 C41 3 57 5 65 17 C74 31 72 52 64 58 C56 50 46 63 30 63 C19 63 15 60 14 53 Z"
-        fill={bloom}
-      />
-      {/* Tall stems sticking above blob */}
-      <line x1="20" y1="53" x2="14" y2="30" stroke={LEAF} strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="14" cy="27" r="5" fill={bloom} opacity="0.9" />
-      <line x1="63" y1="50" x2="68" y2="24" stroke={LEAF} strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="68" cy="21" r="4.5" fill={bloom} opacity="0.75" />
-      {/* Extra wispy stem */}
-      <line x1="50" y1="54" x2="55" y2="35" stroke={LEAF} strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="55" cy="32" r="4" fill={bloom} opacity="0.7" />
-      {/* Flower textures */}
-      <circle cx="29" cy="24" r="8"   fill="white" fillOpacity="0.2" />
-      <circle cx="48" cy="19" r="7.5" fill="white" fillOpacity="0.2" />
-      <circle cx="40" cy="38" r="6.5" fill="white" fillOpacity="0.18" />
-      <circle cx="24" cy="44" r="5.5" fill="white" fillOpacity="0.15" />
-      <circle cx="58" cy="38" r="5"   fill="white" fillOpacity="0.15" />
-      {/* Side leaves */}
-      <ellipse cx="9" cy="44" rx="9" ry="3.5" transform="rotate(-50 9 44)" fill={LEAF} opacity="0.55" />
-      <ellipse cx="62" cy="28" rx="7" ry="3" transform="rotate(30 62 28)" fill={LEAF} opacity="0.5" />
-    </>
-  )
-}
-
-function SingleContent({ bloom, wrap, ribbon }) {
-  return (
-    <>
-      {/* Stem */}
-      <rect x="38.5" y="34" width="3" height="60" rx="1.5" fill={LEAF} />
-      {/* Wrap */}
-      <path d="M32 77 L48 77 L46 93 L34 93 Z" fill={wrap} />
-      <rect x="30" y="73" width="20" height="6" rx="3" fill={ribbon} />
-      {/* Leaf */}
-      <ellipse cx="29" cy="59" rx="11" ry="5" transform="rotate(-36 29 59)" fill={LEAF} opacity="0.75" />
-      {/* Small leaf other side */}
-      <ellipse cx="51" cy="68" rx="8" ry="3.5" transform="rotate(30 51 68)" fill={LEAF} opacity="0.55" />
-      {/* Petals – 6 petals radiating from center (40, 22) */}
-      {[0, 60, 120, 180, 240, 300].map((deg) => {
-        const rad = (deg - 90) * (Math.PI / 180)
-        const cx = 40 + 15 * Math.cos(rad)
-        const cy = 22 + 15 * Math.sin(rad)
-        return (
-          <ellipse
-            key={deg}
-            cx={cx}
-            cy={cy}
-            rx="6.5"
-            ry="9"
-            transform={`rotate(${deg} ${cx} ${cy})`}
-            fill={bloom}
-            opacity="0.9"
-          />
-        )
-      })}
-      {/* Center */}
-      <circle cx="40" cy="22" r="9" fill={bloom} />
-      <circle cx="40" cy="22" r="4.5" fill="white" fillOpacity="0.45" />
-    </>
-  )
-}
-
-function PosyContent({ bloom, wrap, ribbon }) {
-  return (
-    <>
-      {/* Stem wrap – short */}
-      <path d="M32 67 L48 67 L46 84 L34 84 Z" fill={wrap} />
-      <rect x="29" y="63" width="22" height="6" rx="3" fill={ribbon} />
-      {/* Leaves */}
-      <ellipse cx="24" cy="62" rx="8" ry="3.5" transform="rotate(-30 24 62)" fill={LEAF} opacity="0.55" />
-      <ellipse cx="56" cy="62" rx="8" ry="3.5" transform="rotate(30 56 62)" fill={LEAF} opacity="0.55" />
-      {/* Tight compact dome */}
-      <ellipse cx="40" cy="47" rx="20" ry="18" fill={bloom} />
-      {/* Dense flower circles */}
-      <circle cx="30" cy="42" r="6"   fill="white" fillOpacity="0.24" />
-      <circle cx="40" cy="34" r="7"   fill="white" fillOpacity="0.24" />
-      <circle cx="50" cy="42" r="6"   fill="white" fillOpacity="0.24" />
-      <circle cx="34" cy="54" r="5"   fill="white" fillOpacity="0.2" />
-      <circle cx="46" cy="54" r="5"   fill="white" fillOpacity="0.2" />
-      <circle cx="40" cy="47" r="4.5" fill="white" fillOpacity="0.18" />
-    </>
-  )
-}
-
-function FanContent({ bloom, wrap, ribbon }) {
-  // 5 fan stems from convergence point (40, 88)
-  const stems = [
-    { x2: 8,  y2: 22 },
-    { x2: 23, y2: 12 },
-    { x2: 40, y2: 8  },
-    { x2: 57, y2: 12 },
-    { x2: 72, y2: 22 },
-  ]
-  const flowerCenters = [
-    { cx: 8,  cy: 19 },
-    { cx: 23, cy: 9  },
-    { cx: 40, cy: 5  },
-    { cx: 57, cy: 9  },
-    { cx: 72, cy: 19 },
-  ]
-  return (
-    <>
-      {/* Foliage fill between stems */}
-      <ellipse cx="40" cy="38" rx="36" ry="18" fill={LEAF} opacity="0.18" />
-      {/* Stems */}
-      {stems.map((s, i) => (
-        <line
-          key={i}
-          x1="40" y1="84"
-          x2={s.x2} y2={s.y2}
-          stroke={LEAF} strokeWidth="2.2" strokeLinecap="round"
-        />
-      ))}
-      {/* Flower heads */}
-      {flowerCenters.map((f, i) => (
-        <g key={i}>
-          <circle cx={f.cx} cy={f.cy} r="8.5" fill={bloom} />
-          <circle cx={f.cx} cy={f.cy} r="4" fill="white" fillOpacity="0.28" />
-        </g>
-      ))}
-      {/* Side leaves */}
-      <ellipse cx="18" cy="44" rx="8" ry="3" transform="rotate(-18 18 44)" fill={LEAF} opacity="0.5" />
-      <ellipse cx="62" cy="44" rx="8" ry="3" transform="rotate(18 62 44)" fill={LEAF} opacity="0.5" />
-      {/* Wrap + ribbon */}
-      <path d="M33 82 L47 82 L45 96 L35 96 Z" fill={wrap} />
-      <rect x="31" y="78" width="18" height="6" rx="3" fill={ribbon} />
-    </>
-  )
-}
-
-/* ── public ShapeSVG component ── */
-export function ShapeSVG({ id, bloom = '#DDACAB', wrap = '#EFE5D0', ribbon = '#C9A961', className, style }) {
-  const Content = {
-    round:   RoundContent,
-    cascade: CascadeContent,
-    garden:  GardenContent,
-    single:  SingleContent,
-    posy:    PosyContent,
-    fan:     FanContent,
-  }[id]
-
-  if (!Content) return null
+/* ── public ShapeSVG ── */
+export function ShapeSVG({ id, design, bloom = '#DDACAB', wrap = '#EFE5D0', ribbon = '#C9A961', className, style }) {
+  const Design = DESIGNS[design] || DESIGNS[id]
+  if (!Design) return null
 
   return (
-    <svg
-      viewBox="0 0 80 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      style={style}
-    >
-      <Content bloom={bloom} wrap={wrap} ribbon={ribbon} />
+    <svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
+      <Design bloom={bloom} wrap={wrap} ribbon={ribbon} />
     </svg>
   )
 }
+
+/* Хуучин код-той нийцүүлэх re-export (SHAPES-ийг lib/shapes.js эзэмшинэ) */
+export { DEFAULT_SHAPES as SHAPES } from '../../lib/shapes'
