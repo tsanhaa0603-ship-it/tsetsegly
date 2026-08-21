@@ -12,6 +12,7 @@ import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminFlowers from './pages/admin/AdminFlowers'
 import AdminReady from './pages/admin/AdminReady'
+import AdminWrappings from './pages/admin/AdminWrappings'
 import { getToken } from './lib/api'
 
 /* Нэвтрээгүй бол /admin/login руу чиглүүлнэ */
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="/admin" element={<RequireAuth><AdminDashboard /></RequireAuth>} />
         <Route path="/admin/flowers" element={<RequireAuth><AdminFlowers /></RequireAuth>} />
         <Route path="/admin/ready" element={<RequireAuth><AdminReady /></RequireAuth>} />
+        <Route path="/admin/wrappings" element={<RequireAuth><AdminWrappings /></RequireAuth>} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>

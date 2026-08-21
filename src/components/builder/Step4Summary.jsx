@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { WRAPPINGS } from './Step2Wrapping'
+import { DEFAULT_WRAPPINGS as WRAPPINGS } from '../../lib/wrappings'
 import { RIBBONS } from './Step3Ribbon'
 import { SHAPES, ShapeSVG } from './BouquetShapes'
 import { saveGift, giftUrl } from '../../lib/giftStore'
@@ -11,7 +11,8 @@ function fmt(n) {
   return '₮' + n.toLocaleString('mn-MN')
 }
 
-export default function Step4Summary({ order, catalog, onChange, onPrev }) {
+export default function Step4Summary({ order, catalog, wrappings, onChange, onPrev }) {
+  const wrapList = wrappings?.length ? wrappings : WRAPPINGS
   const [submitted, setSubmitted] = useState(false)
   const [errors, setErrors] = useState({})
   const [giftId, setGiftId] = useState(null)
@@ -26,7 +27,7 @@ export default function Step4Summary({ order, catalog, onChange, onPrev }) {
     .filter(([, qty]) => qty > 0)
     .map(([vKey, qty]) => ({ ...(flat[vKey] || { name: vKey, emoji: '🌸', price: 0 }), qty, vKey }))
   const flowerTotal = calcTotal(order.flowers, catalog)
-  const wrappingItem = WRAPPINGS.find((w) => w.id === order.wrapping)
+  const wrappingItem = wrapList.find((w) => w.id === order.wrapping)
   const ribbonItem = RIBBONS.find((r) => r.id === order.ribbon)
   const wrappingCost = wrappingItem?.price || 0
   const grandTotal = flowerTotal + wrappingCost
@@ -217,7 +218,7 @@ export default function Step4Summary({ order, catalog, onChange, onPrev }) {
         {/* Shape */}
         {order.shape && (() => {
           const shapeItem = SHAPES.find((s) => s.id === order.shape)
-          const wrapItem  = WRAPPINGS.find((w) => w.id === order.wrapping)
+          const wrapItem  = wrapList.find((w) => w.id === order.wrapping)
           return (
             <div className="px-5 py-4 border-b border-gold-light/60 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">

@@ -3,6 +3,7 @@
    VITE_API_URL .env-д тохируулагдана.
 ───────────────────────────────────────────── */
 import { DEFAULT_CATALOG, flattenCatalog } from './flowers'
+import { DEFAULT_WRAPPINGS } from './wrappings'
 
 const API = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '')
 
@@ -221,6 +222,62 @@ export async function updateReadyBouquet(id, payload) {
 
 export async function deleteReadyBouquet(id) {
   const res = await fetch(`${API}/api/ready/${id}`, {
+    method: 'DELETE',
+    headers: authHeader(),
+  })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) throw new Error('Устгахад алдаа гарлаа')
+  return res.json()
+}
+
+/* ── Боолтын цаас ── */
+/* GET /api/wrappings — public. Амжилтгүй бол DEFAULT_WRAPPINGS. */
+export async function fetchWrappings() {
+  try {
+    const res = await fetch(`${API}/api/wrappings`)
+    if (!res.ok) return DEFAULT_WRAPPINGS
+    const data = await res.json()
+    return Array.isArray(data) && data.length ? data : DEFAULT_WRAPPINGS
+  } catch {
+    return DEFAULT_WRAPPINGS
+  }
+}
+
+/* GET /api/wrappings/manage — admin бүгд */
+export async function fetchAllWrappings() {
+  const res = await fetch(`${API}/api/wrappings/manage`, { headers: authHeader() })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) throw new Error('Татахад алдаа гарлаа')
+  return res.json()
+}
+
+export async function createWrapping(payload) {
+  const res = await fetch(`${API}/api/wrappings`, {
+    method: 'POST',
+    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}))
+    throw new Error(e.error || 'Үүсгэхэд алдаа гарлаа')
+  }
+  return res.json()
+}
+
+export async function updateWrapping(mongoId, payload) {
+  const res = await fetch(`${API}/api/wrappings/${mongoId}`, {
+    method: 'PATCH',
+    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (res.status === 401) { clearToken(); throw new AuthError() }
+  if (!res.ok) throw new Error('Шинэчлэхэд алдаа гарлаа')
+  return res.json()
+}
+
+export async function deleteWrapping(mongoId) {
+  const res = await fetch(`${API}/api/wrappings/${mongoId}`, {
     method: 'DELETE',
     headers: authHeader(),
   })

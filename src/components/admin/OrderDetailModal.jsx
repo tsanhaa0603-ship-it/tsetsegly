@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { SHAPES } from '../builder/BouquetShapes'
-import { WRAPPINGS } from '../builder/Step2Wrapping'
+import { DEFAULT_WRAPPINGS as WRAPPINGS } from '../../lib/wrappings'
 import { RIBBONS } from '../builder/Step3Ribbon'
 import { giftUrl } from '../../lib/giftStore'
 import { STATUSES, getStatus, formatTugrik, formatDate } from '../../lib/orderStatus'

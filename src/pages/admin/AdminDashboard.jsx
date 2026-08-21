@@ -124,10 +124,16 @@ export default function AdminDashboard() {
               💐 Бэлэн
             </Link>
             <Link
+              to="/admin/wrappings"
+              className="font-cormorant text-sm tracking-widest uppercase text-cream/50 hover:text-cream transition-colors"
+            >
+              🎀 Боолт
+            </Link>
+            <Link
               to="/admin/flowers"
               className="font-cormorant text-sm tracking-widest uppercase text-cream/50 hover:text-cream transition-colors"
             >
-              🌸 Каталог
+              🌸 Цэцэг
             </Link>
             <button
               onClick={logout}

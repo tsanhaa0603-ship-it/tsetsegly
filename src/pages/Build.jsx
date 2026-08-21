@@ -5,8 +5,9 @@ import Step1Flowers from '../components/builder/Step1Flowers'
 import Step2Wrapping from '../components/builder/Step2Wrapping'
 import Step3Ribbon from '../components/builder/Step3Ribbon'
 import Step4Summary from '../components/builder/Step4Summary'
-import { fetchFlowers } from '../lib/api'
+import { fetchFlowers, fetchWrappings } from '../lib/api'
 import { DEFAULT_CATALOG } from '../lib/flowers'
+import { DEFAULT_WRAPPINGS } from '../lib/wrappings'
 
 const TOTAL_STEPS = 4
 
@@ -16,11 +17,13 @@ export default function Build() {
   const preset = location.state?.preset
   const [step, setStep] = useState(location.state?.startStep || 1)
   const [catalog, setCatalog] = useState(DEFAULT_CATALOG)
+  const [wrappings, setWrappings] = useState(DEFAULT_WRAPPINGS)
 
   // Цэцгийн каталогийг backend-аас татна (амжилтгүй бол default)
   useEffect(() => {
     let active = true
     fetchFlowers().then((c) => { if (active) setCatalog(c) })
+    fetchWrappings().then((w) => { if (active) setWrappings(w) })
     return () => { active = false }
   }, [])
   const [order, setOrder] = useState(() => ({
@@ -50,7 +53,7 @@ export default function Build() {
 
   return (
     <div className="min-h-screen bg-cream pt-24 pb-20 px-4">
-      <div className={`mx-auto ${step === 1 ? 'max-w-5xl' : 'max-w-3xl'}`}>
+      <div className={`mx-auto ${step === 1 || step === 2 ? 'max-w-5xl' : 'max-w-3xl'}`}>
         {/* Page title */}
         <div className="text-center mb-10">
           <p className="font-cormorant tracking-[0.4em] text-xs uppercase text-gold-dark/60 mb-2">
@@ -84,6 +87,7 @@ export default function Build() {
               onChangeShape={(shape) => setOrder((o) => ({ ...o, shape }))}
               selected={order.wrapping}
               onChange={(wrapping) => setOrder((o) => ({ ...o, wrapping }))}
+              wrappings={wrappings}
               onNext={next}
               onPrev={prev}
             />
@@ -102,6 +106,7 @@ export default function Build() {
             <Step4Summary
               order={order}
               catalog={catalog}
+              wrappings={wrappings}
               onChange={(fields) => setOrder((o) => ({ ...o, ...fields }))}
               onPrev={prev}
             />
