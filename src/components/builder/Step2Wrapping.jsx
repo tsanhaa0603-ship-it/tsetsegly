@@ -13,7 +13,7 @@ export const WRAPPINGS = [
     dot: '#E8DCC4',
     text: '#5C4A2A',
     svgWrap: '#EFE5D0',
-    image: '/wrappings/cream.png',
+    image: '/wrappings/matte-cream.jpg',
   },
   {
     id: 'pink',
@@ -24,7 +24,7 @@ export const WRAPPINGS = [
     dot: '#F0A8B4',
     text: '#8C3A50',
     svgWrap: '#F9C8D0',
-    image: '/wrappings/pink.png',
+    image: '/wrappings/matte-pink.jpg',
   },
   {
     id: 'black',
@@ -35,7 +35,7 @@ export const WRAPPINGS = [
     dot: '#C9A961',
     text: '#C9A961',
     svgWrap: '#2A2A2A',
-    image: '/wrappings/black.png',
+    image: '/wrappings/sheer-black-gold.jpg',
   },
   {
     id: 'green',
@@ -46,7 +46,7 @@ export const WRAPPINGS = [
     dot: '#6A9950',
     text: '#2D5A1B',
     svgWrap: '#B0CFA0',
-    image: '/wrappings/green.png',
+    image: '/wrappings/textured-green-orange.jpg',
   },
 ]
 
