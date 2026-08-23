@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 const ReadyBouquetSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
+    slug: { type: String, index: true, unique: true, sparse: true }, // /ready/:slug хаяг
     contents: { type: String, default: '' },   // тайлбар текст
     price: { type: Number, default: 0 },
     image: { type: String, default: '' },

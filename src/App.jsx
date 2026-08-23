@@ -8,6 +8,7 @@ import Gift from './pages/Gift'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import ReadyBouquets from './pages/ReadyBouquets'
+import ReadyBouquetDetail from './pages/ReadyBouquetDetail'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminFlowers from './pages/admin/AdminFlowers'
@@ -37,6 +38,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/ready" element={<ReadyBouquets />} />
+        <Route path="/ready/:slug" element={<ReadyBouquetDetail />} />
         <Route path="/build" element={<Build />} />
         <Route path="/gift/:id" element={<Gift />} />
         <Route path="/admin/login" element={<AdminLogin />} />

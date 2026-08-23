@@ -203,6 +203,18 @@ export async function fetchReadyBouquets() {
   }
 }
 
+/* GET /api/ready/slug/:slug — нэг баглааны дэлгэрэнгүй.
+   Олдоогүй эсвэл алдаа гарвал null. */
+export async function fetchReadyBouquet(slug) {
+  try {
+    const res = await fetch(`${API}/api/ready/slug/${encodeURIComponent(slug)}`)
+    if (!res.ok) return null
+    return res.json()
+  } catch {
+    return null
+  }
+}
+
 /* GET /api/ready/manage — admin бүгд */
 export async function fetchAllReadyBouquets() {
   const res = await fetch(`${API}/api/ready/manage`, { headers: authHeader() })
