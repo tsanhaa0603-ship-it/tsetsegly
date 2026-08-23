@@ -7,6 +7,13 @@ function fmt(n) {
   return '₮' + Number(n || 0).toLocaleString('mn-MN')
 }
 
+/* slug байхгүй баглаа дээр /ready/undefined руу заасан
+   эвдэрсэн холбоос үүсгэхгүй — энгийн элемент болгож харуулна. */
+function MaybeLink({ slug, className, style, children }) {
+  if (!slug) return <div className={className} style={style}>{children}</div>
+  return <Link to={`/ready/${slug}`} className={className} style={style}>{children}</Link>
+}
+
 /* Нүүр хуудасны "Бэлэн баглаа" хэсэг */
 function ReadySection() {
   const navigate = useNavigate()
@@ -39,14 +46,14 @@ function ReadySection() {
               className="group rounded-2xl border border-gold-light/70 overflow-hidden flex flex-col transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
               style={{ background: 'linear-gradient(160deg, #FFFDF8, #FAF7F2)' }}
             >
-              <Link to={`/ready/${b.slug}`} className="relative aspect-[4/3] overflow-hidden block" style={{ background: '#FAF7F2' }}>
+              <MaybeLink slug={b.slug} className="relative aspect-[4/3] overflow-hidden block" style={{ background: '#FAF7F2' }}>
                 {b.image
                   ? <img src={b.image} alt={b.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
                   : <div className="w-full h-full flex items-center justify-center text-5xl">💐</div>}
-              </Link>
+              </MaybeLink>
               <div className="p-5 flex flex-col flex-1">
                 <h3 className="font-playfair italic text-xl text-ink mb-1">
-                  <Link to={`/ready/${b.slug}`} className="hover:text-gold-dark transition-colors">{b.name}</Link>
+                  <MaybeLink slug={b.slug} className="hover:text-gold-dark transition-colors">{b.name}</MaybeLink>
                 </h3>
                 <p className="font-cormorant text-sm text-ink/55 flex-1">{b.contents}</p>
                 <div className="flex items-center justify-between mt-3">

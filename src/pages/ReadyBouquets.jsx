@@ -15,6 +15,13 @@ function fmt(n) {
   return '₮' + Number(n || 0).toLocaleString('mn-MN')
 }
 
+/* slug байхгүй баглаа (хуучин бичлэг) дээр /ready/undefined руу
+   заасан эвдэрсэн холбоос үүсгэхгүй — энгийн элемент болгож харуулна. */
+function MaybeLink({ slug, className, style, children }) {
+  if (!slug) return <div className={className} style={style}>{children}</div>
+  return <Link to={`/ready/${slug}`} className={className} style={style}>{children}</Link>
+}
+
 export default function ReadyBouquets() {
   const navigate = useNavigate()
   const [bouquets, setBouquets] = useState(null)
@@ -65,25 +72,27 @@ export default function ReadyBouquets() {
                   style={{ background: 'linear-gradient(160deg, #FFFDF8, #FAF7F2)' }}
                 >
                   {/* Image */}
-                  <Link to={`/ready/${b.slug}`} className="relative aspect-[4/3] overflow-hidden block" style={{ background: '#FAF7F2' }}>
+                  <MaybeLink slug={b.slug} className="relative aspect-[4/3] overflow-hidden block" style={{ background: '#FAF7F2' }}>
                     {b.image ? (
                       <img src={b.image} alt={b.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-5xl">💐</div>
                     )}
-                  </Link>
+                  </MaybeLink>
                   {/* Info */}
                   <div className="p-5 flex flex-col flex-1">
                     <h3 className="font-playfair italic text-2xl text-ink mb-1.5">
-                      <Link to={`/ready/${b.slug}`} className="hover:text-gold-dark transition-colors">{b.name}</Link>
+                      <MaybeLink slug={b.slug} className="hover:text-gold-dark transition-colors">{b.name}</MaybeLink>
                     </h3>
                     <p className="font-cormorant text-base text-ink/55 leading-relaxed flex-1">{b.contents}</p>
-                    <Link
-                      to={`/ready/${b.slug}`}
-                      className="font-cormorant text-sm text-gold-dark/80 hover:text-gold-dark mt-2 self-start border-b border-gold-mid/40 hover:border-gold-mid pb-0.5 transition-colors"
-                    >
-                      Дэлгэрэнгүй →
-                    </Link>
+                    {b.slug && (
+                      <Link
+                        to={`/ready/${b.slug}`}
+                        className="font-cormorant text-sm text-gold-dark/80 hover:text-gold-dark mt-2 self-start border-b border-gold-mid/40 hover:border-gold-mid pb-0.5 transition-colors"
+                      >
+                        Дэлгэрэнгүй →
+                      </Link>
+                    )}
                     <div className="flex items-center justify-between mt-4">
                       <span className="font-playfair text-xl" style={{ color: '#8A6E2F' }}>{fmt(b.price)}</span>
                       <button
