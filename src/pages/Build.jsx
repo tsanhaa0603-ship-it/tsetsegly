@@ -4,13 +4,14 @@ import StepIndicator from '../components/builder/StepIndicator'
 import Step1Flowers from '../components/builder/Step1Flowers'
 import Step2Wrapping from '../components/builder/Step2Wrapping'
 import Step3Ribbon from '../components/builder/Step3Ribbon'
-import Step4Summary from '../components/builder/Step4Summary'
+import Step4Delivery from '../components/builder/Step4Delivery'
+import Step5Summary from '../components/builder/Step4Summary'
 import { fetchFlowers, fetchWrappings, fetchShapes } from '../lib/api'
-import { DEFAULT_CATALOG } from '../lib/flowers'
+import { DEFAULT_CATALOG, calcTotal } from '../lib/flowers'
 import { DEFAULT_WRAPPINGS } from '../lib/wrappings'
 import { DEFAULT_SHAPES } from '../lib/shapes'
 
-const TOTAL_STEPS = 4
+const TOTAL_STEPS = 5
 
 export default function Build() {
   const location = useLocation()
@@ -36,6 +37,16 @@ export default function Build() {
     ribbon: preset?.ribbon || null,  // ribbon id
     name: '',
     phone: '',
+    delivery: {       // хүргэлтийн мэдээлэл
+      zone: '',
+      address: '',
+      note: '',
+      recipientName: '',
+      recipientPhone: '',
+      surprise: false,
+      date: '',
+      slot: '',
+    },
     gift: {           // дижитал бэлгийн хуудасны агуулга
       recipientName: '',
       letterText: '',
@@ -50,6 +61,11 @@ export default function Build() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [step])
+
+  // Хүргэлт үнэгүй болох босгыг шалгахад цэцэг + боолтын дүн хэрэгтэй
+  const subtotal =
+    calcTotal(order.flowers, catalog) +
+    (wrappings.find((w) => w.id === order.wrapping)?.price || 0)
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS))
   const prev = () => setStep((s) => Math.max(s - 1, 1))
@@ -107,7 +123,17 @@ export default function Build() {
             />
           )}
           {step === 4 && (
-            <Step4Summary
+            <Step4Delivery
+              delivery={order.delivery}
+              onChange={(delivery) => setOrder((o) => ({ ...o, delivery }))}
+              giftRecipientName={order.gift?.recipientName}
+              subtotal={subtotal}
+              onNext={next}
+              onPrev={prev}
+            />
+          )}
+          {step === 5 && (
+            <Step5Summary
               order={order}
               catalog={catalog}
               wrappings={wrappings}

@@ -4,6 +4,7 @@ import { DEFAULT_WRAPPINGS as WRAPPINGS } from '../../lib/wrappings'
 import { RIBBONS } from '../builder/Step3Ribbon'
 import { giftUrl } from '../../lib/giftStore'
 import { STATUSES, getStatus, formatTugrik, formatDate } from '../../lib/orderStatus'
+import { findZone, findSlot, formatDate as formatDeliveryDate } from '../../lib/delivery'
 
 function Row({ label, children }) {
   return (
@@ -114,11 +115,47 @@ export default function OrderDetailModal({ order, onClose, onStatusChange }) {
             )}
           </div>
 
+          {/* Delivery */}
+          {order.delivery?.zone && (() => {
+            const dv = order.delivery
+            const zone = findZone(dv.zone)
+            const slot = findSlot(dv.slot)
+            return (
+              <>
+                <p className="font-cormorant tracking-widest text-xs uppercase text-gold-mid/50 mb-2">
+                  Хүргэлт
+                </p>
+                <div className="mb-5">
+                  <Row label="Бүс">{zone?.name || dv.zone}</Row>
+                  <Row label="Хаяг"><span className="whitespace-pre-line">{dv.address}</span></Row>
+                  {dv.note && <Row label="Чиглүүлэг">{dv.note}</Row>}
+                  <Row label="Хэзээ">
+                    {formatDeliveryDate(dv.date)}{slot ? ` · ${slot.label}` : ''}
+                  </Row>
+                  <Row label="Хүлээн авагч">{dv.recipientName}</Row>
+                  <Row label="Т. утас">
+                    <a href={`tel:${dv.recipientPhone}`} className="text-gold-mid hover:underline">
+                      {dv.recipientPhone}
+                    </a>
+                  </Row>
+                  {dv.surprise && (
+                    <Row label="Анхаар">
+                      <span className="text-amber-300">🤫 Гэнэтийн бэлэг — урьдчилж бүү залга</span>
+                    </Row>
+                  )}
+                </div>
+              </>
+            )
+          })()}
+
           {/* Customer */}
           <p className="font-cormorant tracking-widest text-xs uppercase text-gold-mid/50 mb-2">Захиалагч</p>
           <div className="mb-5">
             <Row label="Нэр">{order.customerName}</Row>
             <Row label="Утас"><a href={`tel:${order.customerPhone}`} className="text-gold-mid hover:underline">{order.customerPhone}</a></Row>
+            {order.deliveryFee > 0 && (
+              <Row label="Хүргэлт">{formatTugrik(order.deliveryFee)}</Row>
+            )}
             <Row label="Нийт үнэ"><span className="text-gold-mid font-medium text-lg">{formatTugrik(order.totalPrice)}</span></Row>
           </div>
 

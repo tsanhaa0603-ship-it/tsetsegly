@@ -14,6 +14,22 @@ const FlowerSchema = new mongoose.Schema(
   { _id: false }
 )
 
+/* Хүргэлтийн мэдээлэл — Tsetsegly салбар дэлгүүргүй тул
+   бүх захиалга хүргэлтээр очно. */
+const DeliverySchema = new mongoose.Schema(
+  {
+    zone: { type: String, default: '' },           // дүүргийн id (delivery.js-ийн DELIVERY_ZONES)
+    address: { type: String, default: '' },        // хороо, байр, орц, тоот
+    note: { type: String, default: '' },           // орцны код, чиглүүлэг
+    recipientName: { type: String, default: '' },
+    recipientPhone: { type: String, default: '' },
+    surprise: { type: Boolean, default: false },   // хүлээн авагчид урьдчилж залгахгүй
+    date: { type: String, default: '' },           // YYYY-MM-DD
+    slot: { type: String, default: '' },           // цагийн хуваарийн id
+  },
+  { _id: false }
+)
+
 const OrderSchema = new mongoose.Schema(
   {
     // ── Баглааны бүрэлдэхүүн ──
@@ -29,6 +45,10 @@ const OrderSchema = new mongoose.Schema(
     letterText: { type: String, default: '' },
     letterFont: { type: String, default: 'elegant' },
     photos: { type: [String], default: [] },        // base64 зургууд
+
+    // ── Хүргэлт ──
+    delivery: { type: DeliverySchema, default: () => ({}) },
+    deliveryFee: { type: Number, default: 0 },
 
     // ── Үнэ ба захиалагч ──
     totalPrice: { type: Number, default: 0 },

@@ -1,4 +1,12 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import {
+  DELIVERY_ZONES,
+  OUT_OF_ZONE,
+  FREE_DELIVERY_MIN,
+  LAST_SAME_DAY_HOUR,
+  CITY_DELIVERY_FEE,
+} from '../lib/delivery'
 
 function GoldOrb({ className }) {
   return (
@@ -12,9 +20,13 @@ function GoldOrb({ className }) {
 const CONTACTS = [
   { icon: '📞', label: 'Утас', value: '8844 4310', href: 'tel:88444310' },
   { icon: '📧', label: 'Имэйл', value: 'tsanhaa0603@gmail.com', href: 'mailto:tsanhaa0603@gmail.com' },
-  { icon: '📍', label: 'Байршил', value: 'Улаанбаатар хот', href: null },
+  { icon: '🚚', label: 'Үйлчилгээ', value: 'Улаанбаатар хот · зөвхөн хүргэлт', href: null },
   { icon: '🕐', label: 'Ажлын цаг', value: '10:00 - 20:00', href: null },
 ]
+
+function fmt(n) {
+  return '₮' + Number(n || 0).toLocaleString('mn-MN')
+}
 
 const SOCIALS = [
   { label: 'Instagram', handle: '@tsetsegly', href: 'https://www.instagram.com/tsetsegly.shop?igsh=aWdiN3pmdWVlMHUy&utm_source=qr' },
@@ -59,6 +71,78 @@ export default function Contact() {
           <p className="font-cormorant text-xl text-ink/70 leading-relaxed max-w-xl mx-auto">
             Захиалга, асуулт, хамтын ажиллагааны талаар бидэнтэй чөлөөтэй холбогдоорой.
           </p>
+          <p className="font-cormorant text-base text-ink/50 leading-relaxed max-w-xl mx-auto mt-3">
+            Tsetsegly салбар дэлгүүргүй. Баглаа бүрийг захиалга ирсний дараа гараар бэлтгэж,
+            таны заасан хаягт хүргэж өгдөг.
+          </p>
+        </div>
+      </section>
+
+      {/* Хүргэлтийн бүс, төлбөр */}
+      <section className="px-6 pb-12">
+        <div className="max-w-4xl mx-auto">
+          <div className="rounded-2xl border border-gold-light/70 overflow-hidden"
+            style={{ background: 'linear-gradient(160deg, #FFFDF8, #FAF7F2)' }}>
+            <div className="px-6 pt-6 pb-4">
+              <p className="font-cormorant tracking-[0.3em] text-xs uppercase text-gold-dark/70 mb-2">
+                Хүргэлт
+              </p>
+              <h2 className="font-playfair italic text-2xl md:text-3xl text-ink">
+                Бүс ба төлбөр
+              </h2>
+              <p className="font-cormorant text-base text-ink/55 mt-2 max-w-xl">
+                Хотын доторх бүх чиглэлд хүргэлт{' '}
+                <span className="text-gold-dark font-medium">{fmt(CITY_DELIVERY_FEE)}</span>.
+                {' '}{fmt(FREE_DELIVERY_MIN)}-аас дээш захиалгад үнэгүй.
+                Тухайн өдөртөө хүргүүлэхийн тулд {LAST_SAME_DAY_HOUR}:00 цагаас өмнө захиалаарай.
+              </p>
+            </div>
+
+            <div className="px-6 pb-6">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[380px] border-collapse">
+                  <thead>
+                    <tr className="border-b border-gold-light/70">
+                      <th className="text-left font-cormorant tracking-widest text-xs uppercase text-ink/40 py-2.5 pr-4">
+                        Дүүрэг
+                      </th>
+                      <th className="text-left font-cormorant tracking-widest text-xs uppercase text-ink/40 py-2.5 pr-4">
+                        Хугацаа
+                      </th>
+                      <th className="text-right font-cormorant tracking-widest text-xs uppercase text-ink/40 py-2.5">
+                        Төлбөр
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {DELIVERY_ZONES.map((z) => (
+                      <tr key={z.id} className="border-b border-gold-light/40">
+                        <td className="font-cormorant text-base text-ink py-2.5 pr-4">{z.name}</td>
+                        <td className="font-cormorant text-base text-ink/55 py-2.5 pr-4 whitespace-nowrap">{z.eta}</td>
+                        <td className="font-cormorant text-base text-gold-dark py-2.5 text-right whitespace-nowrap">
+                          {fmt(z.fee)}
+                        </td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <td className="font-cormorant text-base text-ink py-2.5 pr-4">{OUT_OF_ZONE.name}</td>
+                      <td className="font-cormorant text-base text-ink/55 py-2.5 pr-4 whitespace-nowrap">{OUT_OF_ZONE.eta}</td>
+                      <td className="font-cormorant text-base text-ink/40 py-2.5 text-right whitespace-nowrap">
+                        Тохиролцоно
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <Link
+                to="/build"
+                className="inline-block mt-5 font-cormorant text-sm tracking-widest uppercase text-gold-dark border-b border-gold-mid/50 hover:border-gold-mid transition-colors pb-0.5"
+              >
+                Баглаа захиалах →
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

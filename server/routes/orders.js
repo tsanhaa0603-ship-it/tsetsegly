@@ -12,6 +12,10 @@ router.post('/', async (req, res) => {
     if (!b.customerName || !b.customerPhone) {
       return res.status(400).json({ error: 'Нэр болон утасны дугаар шаардлагатай' })
     }
+    const d = b.delivery || {}
+    if (!d.zone || !d.address || !d.recipientPhone) {
+      return res.status(400).json({ error: 'Хүргэлтийн бүс, хаяг, хүлээн авагчийн утас шаардлагатай' })
+    }
     const order = await Order.create({
       flowers: Array.isArray(b.flowers) ? b.flowers : [],
       bouquetShape: b.bouquetShape || '',
@@ -23,6 +27,17 @@ router.post('/', async (req, res) => {
       letterText: b.letterText || '',
       letterFont: b.letterFont || 'elegant',
       photos: Array.isArray(b.photos) ? b.photos : [],
+      delivery: {
+        zone: d.zone || '',
+        address: d.address || '',
+        note: d.note || '',
+        recipientName: d.recipientName || '',
+        recipientPhone: d.recipientPhone || '',
+        surprise: !!d.surprise,
+        date: d.date || '',
+        slot: d.slot || '',
+      },
+      deliveryFee: Number(b.deliveryFee) || 0,
       totalPrice: Number(b.totalPrice) || 0,
       customerName: b.customerName,
       customerPhone: b.customerPhone,

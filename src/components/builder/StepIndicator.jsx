@@ -1,4 +1,4 @@
-const LABELS = ['Цэцэг', 'Боолт', 'Туузаа', 'Захиалга']
+const LABELS = ['Цэцэг', 'Боолт', 'Туузаа', 'Хүргэлт', 'Захиалга']
 
 export default function StepIndicator({ current, total }) {
   return (
@@ -41,7 +41,7 @@ export default function StepIndicator({ current, total }) {
 
             {/* Connector line */}
             {num < total && (
-              <div className="w-12 md:w-20 h-px mb-5 mx-1">
+              <div className="w-5 sm:w-10 md:w-16 h-px mb-5 mx-1">
                 <div
                   className="h-full transition-all duration-500"
                   style={{

@@ -5,6 +5,7 @@ import { SHAPES, ShapeSVG } from './BouquetShapes'
 import { saveGift, giftUrl } from '../../lib/giftStore'
 import { createOrder, buildOrderPayload } from '../../lib/api'
 import { flattenCatalog, calcTotal } from '../../lib/flowers'
+import { calcDeliveryFee, findZone, findSlot, formatDate } from '../../lib/delivery'
 import QpayModal from './QpayModal'
 
 function fmt(n) {
@@ -31,10 +32,20 @@ export default function Step4Summary({ order, catalog, wrappings, shapes, onChan
   const wrappingItem = wrapList.find((w) => w.id === order.wrapping)
   const ribbonItem = RIBBONS.find((r) => r.id === order.ribbon)
   const wrappingCost = wrappingItem?.price || 0
-  const grandTotal = flowerTotal + wrappingCost
+  const subtotal = flowerTotal + wrappingCost
+
+  const dv = order.delivery || {}
+  const zoneItem = findZone(dv.zone)
+  const slotItem = findSlot(dv.slot)
+  const { fee: deliveryFee, free: freeDelivery, negotiable: feeNegotiable } =
+    calcDeliveryFee(dv.zone, subtotal)
+  const grandTotal = subtotal + deliveryFee
 
   const gift = order.gift || {}
-  const hasGiftContent = gift.recipientName || gift.letterText || gift.musicUrl || (gift.photos?.length)
+  // Boolean болгож хувиргана — photos.length === 0 бол JSX "0" гэж хэвлэдэг
+  const hasGiftContent = Boolean(
+    gift.recipientName || gift.letterText || gift.musicUrl || gift.photos?.length
+  )
 
   function validate() {
     const e = {}
@@ -53,7 +64,7 @@ export default function Step4Summary({ order, catalog, wrappings, shapes, onChan
 
     setSaving(true)
     setOffline(false)
-    const fullOrder = { ...order, total: grandTotal }
+    const fullOrder = { ...order, total: grandTotal, deliveryFee }
 
     try {
       // Backend-д шууд хадгална
@@ -71,6 +82,8 @@ export default function Step4Summary({ order, catalog, wrappings, shapes, onChan
         name: order.name,
         phone: order.phone,
         total: grandTotal,
+        delivery: dv,
+        deliveryFee,
         gift,
       })
       setGiftId(id)
@@ -129,6 +142,22 @@ export default function Step4Summary({ order, catalog, wrappings, shapes, onChan
             <span className="text-gold-dark font-medium">{order.name}</span>, таны захиалгыг хүлээн авлаа.<br />
             Удахгүй <span className="text-gold-dark font-medium">{order.phone}</span> дугаарт холбогдоно.
           </p>
+
+          {zoneItem && (
+            <div className="mt-5 inline-block text-left rounded-xl border border-gold-light/80 px-5 py-3.5"
+              style={{ background: 'linear-gradient(160deg, #FEFCF7, #FAF7F2)' }}>
+              <p className="font-cormorant tracking-widest text-xs uppercase text-gold-dark/70 mb-1.5 flex items-center gap-1.5">
+                <span>🚚</span> Хүргэлт
+              </p>
+              <p className="font-cormorant text-base text-ink">{formatDate(dv.date)}</p>
+              <p className="font-cormorant text-sm text-ink/60">
+                {slotItem?.label} · {zoneItem.name} дүүрэг
+              </p>
+              <p className="font-cormorant text-sm text-ink/50 mt-1">
+                {dv.recipientName} · {dv.recipientPhone}
+              </p>
+            </div>
+          )}
 
           {offline && (
             <p className="font-cormorant text-sm text-amber-600/70 mt-4 max-w-xs mx-auto">
@@ -303,18 +332,78 @@ export default function Step4Summary({ order, catalog, wrappings, shapes, onChan
           </div>
         )}
 
+        {/* Хүргэлт */}
+        {zoneItem && (
+          <div className="px-5 py-4 border-b border-gold-light/60">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-cormorant tracking-widest text-xs uppercase text-ink/40 mb-1 flex items-center gap-1.5">
+                  <span>🚚</span> Хүргэлт
+                </p>
+                <p className="font-cormorant text-base text-ink">
+                  {zoneItem.name} дүүрэг
+                </p>
+                {dv.address && (
+                  <p className="font-cormorant text-sm text-ink/60 mt-0.5 whitespace-pre-line break-words">
+                    {dv.address}
+                  </p>
+                )}
+                {dv.note && (
+                  <p className="font-cormorant text-sm text-ink/40 mt-0.5">{dv.note}</p>
+                )}
+                <p className="font-cormorant text-sm text-ink/60 mt-1.5">
+                  {formatDate(dv.date)}
+                  {slotItem && <span className="text-ink/40"> · {slotItem.label}</span>}
+                </p>
+                <p className="font-cormorant text-sm text-ink/60 mt-0.5">
+                  Хүлээн авагч: {dv.recipientName}
+                  <span className="text-ink/40"> · {dv.recipientPhone}</span>
+                </p>
+                {dv.surprise && (
+                  <span className="inline-block mt-2 text-xs font-cormorant px-2.5 py-1 rounded-full bg-gold-light/40 text-ink/70">
+                    🤫 Гэнэтийн бэлэг — урьдчилж залгахгүй
+                  </span>
+                )}
+              </div>
+              <span className="font-cormorant text-base text-gold-dark whitespace-nowrap">
+                {feeNegotiable ? 'Тохиролцоно' : freeDelivery ? 'Үнэгүй' : fmt(deliveryFee)}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Grand total */}
-        <div className="px-5 py-4 flex items-center justify-between"
+        <div className="px-5 py-4"
           style={{ background: 'linear-gradient(135deg, #F4EBD3 0%, #FEF8EC 100%)' }}
         >
-          <span className="font-playfair text-lg text-ink">Нийт дүн</span>
-          <span className="font-playfair text-2xl text-ink">{fmt(grandTotal)}</span>
+          <div className="flex items-center justify-between text-ink/60">
+            <span className="font-cormorant text-base">Баглаа</span>
+            <span className="font-cormorant text-base">{fmt(subtotal)}</span>
+          </div>
+          <div className="flex items-center justify-between text-ink/60 mt-1">
+            <span className="font-cormorant text-base">Хүргэлт</span>
+            <span className="font-cormorant text-base">
+              {feeNegotiable ? 'Тохиролцоно' : freeDelivery ? 'Үнэгүй' : fmt(deliveryFee)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-gold-mid/25">
+            <span className="font-playfair text-lg text-ink">Нийт дүн</span>
+            <span className="font-playfair text-2xl text-ink">{fmt(grandTotal)}</span>
+          </div>
+          {feeNegotiable && (
+            <p className="font-cormorant text-xs text-ink/45 mt-2">
+              Бүсээс гадуурх хүргэлтийн төлбөр нийт дүнд ороогүй — утсаар тохирно.
+            </p>
+          )}
         </div>
       </div>
 
       {/* Contact form */}
       <div className="rounded-2xl border border-gold-light/80 px-5 py-5 mb-6 bg-white/40">
-        <p className="font-cormorant tracking-widest text-xs uppercase text-ink/40 mb-4">Холбоо барих</p>
+        <p className="font-cormorant tracking-widest text-xs uppercase text-ink/40 mb-1">Захиалагч</p>
+        <p className="font-cormorant text-sm text-ink/40 mb-4">
+          Захиалга баталгаажуулах, хүргэлтийн явцыг мэдэгдэхэд энэ дугаарт холбогдоно
+        </p>
         <div className="flex flex-col gap-4">
           <div>
             <label className="font-cormorant text-sm text-ink/60 mb-1 block">Таны нэр</label>

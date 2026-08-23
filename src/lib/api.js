@@ -12,6 +12,7 @@ const API = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\
    order.flowers нь { 'flowerKey:colorKey': qty } хэлбэртэй. */
 export function buildOrderPayload(order, catalog = DEFAULT_CATALOG) {
   const g = order.gift || {}
+  const dv = order.delivery || {}
   const flat = flattenCatalog(catalog)
   const flowers = Object.entries(order.flowers || {})
     .filter(([, qty]) => qty > 0)
@@ -43,6 +44,17 @@ export function buildOrderPayload(order, catalog = DEFAULT_CATALOG) {
     totalPrice: order.total || 0,
     customerName: order.name || '',
     customerPhone: order.phone || '',
+    deliveryFee: order.deliveryFee || 0,
+    delivery: {
+      zone: dv.zone || '',
+      address: dv.address || '',
+      note: dv.note || '',
+      recipientName: dv.recipientName || '',
+      recipientPhone: dv.recipientPhone || '',
+      surprise: !!dv.surprise,
+      date: dv.date || '',
+      slot: dv.slot || '',
+    },
   }
 }
 

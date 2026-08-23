@@ -276,7 +276,7 @@ export default function Step3Ribbon({
         </Section>
       </div>
 
-      <WizardNav onNext={onNext} onPrev={onPrev} nextDisabled={!selectedRibbon} nextLabel="Хураангуй харах →" />
+      <WizardNav onNext={onNext} onPrev={onPrev} nextDisabled={!selectedRibbon} nextLabel="Хүргэлт →" />
     </div>
   )
 }
