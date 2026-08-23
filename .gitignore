@@ -23,6 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
+# tools/ скриптийн гаралт
+influencers.csv
+handles.txt
+
 # Claude Code plugin файлууд (апп-тай хамаагүй)
 .agents/
 skills-lock.json
