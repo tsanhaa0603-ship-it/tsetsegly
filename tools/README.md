@@ -73,9 +73,10 @@ node tools/check-influencers.mjs undrrly cherrymuunuu munhluu
 
 Хязгаарыг файлын дээд талын тогтмолуудаас өөрчилнө.
 
-### HTTP 401 гарвал
+### HTTP 401 / 403 / 429 гарвал
 
-Instagram нэрээ нууцлан хандахыг хааж эхэлдэг. Тэр үед өөрийн session-оор ханд:
+Instagram нэвтрээгүй хандалтыг эдгээр кодоор хаадаг. Гурвуулангийн шийдэл нэг —
+өөрийн session-оор ханд:
 
 ```powershell
 $env:IG_SESSIONID = "<sessionid>"
@@ -83,6 +84,10 @@ node tools/check-influencers.mjs handles.txt
 ```
 
 Утгыг Chrome → instagram.com → F12 → Application → Cookies → `sessionid`-аас хуулна.
+
+Session-оор ч хаагдвал сүлжээнээс болсон байх магадлалтай. VPN, ажлын сүлжээ,
+үүлэн сервер (Vercel, GitHub Actions, Codespaces) дээрээс ажиллуулбал Instagram
+IP-гээр нь шууд хаадаг — **гэрийн интернетээсээ, өөрийн компьютер дээр** ажиллуул.
 
 Энэ бол таны нэвтрэлтийн түлхүүр. **Файлд бүү хадгал, git-д бүү оруул** — зөвхөн
 терминалын хувьсагчаар өг. Хэсэг хугацааны дараа хүчингүй болно, дахин хуулна.
