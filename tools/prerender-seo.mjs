@@ -504,6 +504,46 @@ for (const route of allRoutes) {
 
 if (apiNote) console.log(`\n  ⚠ Бүтээгдэхүүний хуудас алгаслаа: ${apiNote}`)
 
+/* ── Бэлгийн хуудасны хуваалцах карт ──
+   /gift/:id-г хуваалцахад Instagram, Messenger, Viber дээр гарах
+   урьдчилсан харагдац. Ердийн дэлгүүрийн гарчиг гарвал товшилт
+   багасдаг тул бэлгийн аястай болгоно.
+
+   Захидал, зураг ХЭЗЭЭ Ч энд орохгүй — бүх бэлэгт нэг ижил, хувийн
+   мэдээлэлгүй карт. noindex, sitemap-д ч ороогүй.
+
+   vercel.json нь /gift/(.*) хүсэлтийг энэ файл руу чиглүүлнэ. */
+{
+  const giftUrl = SITE + '/gift/'
+  const title = 'Танд зориулсан бэлэг 💐 | Tsetsegly'
+  const desc = 'Хайртай хүн тань танд цэцгийн баглаа, захидал илгээжээ. Нээж үзэхийн тулд дарна уу.'
+
+  let html = stripInjected(base)
+  html = html
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>`)
+    .replace(/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${desc}" />`)
+    /* Хувийн хуудас — хайлтын системд индексжүүлэхгүй */
+    .replace(/<meta name="robots" content="[^"]*" \/>/, '<meta name="robots" content="noindex, nofollow" />')
+    .replace(/<link rel="canonical" href="[^"]*" \/>/, '')
+    .replace(/<meta property="og:url" content="[^"]*" \/>/, `<meta property="og:url" content="${giftUrl}" />`)
+    .replace(/<meta property="og:title" content="[^"]*" \/>/, `<meta property="og:title" content="Танд зориулсан бэлэг 💐" />`)
+    .replace(/<meta property="og:description" content="[^"]*" \/>/, `<meta property="og:description" content="${desc}" />`)
+    .replace(/<meta name="twitter:title" content="[^"]*" \/>/, `<meta name="twitter:title" content="Танд зориулсан бэлэг 💐" />`)
+    .replace(/<meta name="twitter:description" content="[^"]*" \/>/, `<meta name="twitter:description" content="${desc}" />`)
+    /* Биед хамгийн бага агуулга — React шууд солино. Хувийн зүйл алга. */
+    .replace(
+      '<div id="root"></div>',
+      `<div id="root"><div class="prerender"><h1>Танд зориулсан бэлэг</h1>` +
+        `<p>Хайртай хүн тань танд цэцгийн баглаа, захидал илгээжээ.</p>` +
+        `<p><a href="/">Tsetsegly — захиалгат цэцгийн дэлгүүр</a></p></div></div>`
+    )
+
+  const out = join(DIST, 'gift/index.html')
+  mkdirSync(dirname(out), { recursive: true })
+  writeFileSync(out, html, 'utf8')
+  console.log(`  /gift/*                      → dist/gift/index.html (noindex, хуваалцах карт)`)
+}
+
 /* ── sitemap.xml — маршрутын жагсаалттай ижил эх сурвалжаас ── */
 const today = new Date().toISOString().slice(0, 10)
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

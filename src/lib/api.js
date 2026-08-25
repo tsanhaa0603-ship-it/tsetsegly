@@ -367,11 +367,23 @@ export async function deleteShape(mongoId) {
   return res.json()
 }
 
-/* NFC бэлгийн мэдээлэл татах — олдохгүй бол null */
-export async function fetchGift(id) {
-  const res = await fetch(`${API}/api/gift/${id}`)
-  if (!res.ok) return null
-  return res.json()
+/* NFC бэлгийн мэдээлэл татах — олдохгүй бол null.
+
+   Хуваалцсан холбоосыг нээж буй хүн хоосон дэлгэц удаан хүлээвэл
+   орхидог. Сервер удаашрах эсвэл унтарсан үед мөнхөд хүлээхгүйн
+   тулд 8 секундын хязгаар тавьж, localStorage руу шилжинэ. */
+export async function fetchGift(id, timeoutMs = 8000) {
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs)
+  try {
+    const res = await fetch(`${API}/api/gift/${id}`, { signal: ctrl.signal })
+    if (!res.ok) return null
+    return await res.json()
+  } catch {
+    return null
+  } finally {
+    clearTimeout(timer)
+  }
 }
 
 /* Backend эсвэл localStorage-аас ирсэн өгөгдлийг нэгдсэн хэлбэрт оруулна */

@@ -9,6 +9,8 @@ import { SHAPES, ShapeSVG } from '../components/builder/BouquetShapes'
 import { RIBBONS } from '../components/builder/Step3Ribbon'
 import Confetti from '../components/gift/Confetti'
 import PhotoCarousel from '../components/gift/PhotoCarousel'
+import ShareGift from '../components/gift/ShareGift'
+import { trackGiftOpened, trackGiftCtaClick } from '../lib/analytics'
 
 /* Gradient gold orb (Hero-той ижил аяс) */
 function GoldOrb({ className }) {
@@ -82,6 +84,7 @@ export default function Gift() {
   function open() {
     setOpened(true)
     setConfetti(true)
+    trackGiftOpened()
   }
 
   /* ── Envelope intro (gate for music autoplay gesture) ── */
@@ -280,16 +283,22 @@ export default function Gift() {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center pt-4 pb-2 reveal" style={{ animationDelay: '1s' }}>
-          <div className="w-10 h-px mx-auto mb-4"
+        {/* Хуваалцах */}
+        <div className="pt-6 reveal" style={{ animationDelay: '0.9s' }}>
+          <div className="w-10 h-px mx-auto mb-5"
             style={{ background: 'linear-gradient(90deg, transparent, #C9A961, transparent)' }} />
+          <ShareGift senderName={data.senderName} />
+        </div>
+
+        {/* Footer */}
+        <div className="text-center pt-8 pb-2 reveal" style={{ animationDelay: '1s' }}>
           <Link to="/" className="font-playfair italic text-2xl gold-text">Tsetsegly</Link>
           <p className="font-cormorant text-sm text-ink/40 tracking-widest uppercase mt-1">
             Made-to-order flowers
           </p>
           <Link
-            to="/build"
+            to="/build?utm_source=gift&utm_medium=referral&utm_campaign=gift_page"
+            onClick={trackGiftCtaClick}
             className="inline-block mt-5 font-cormorant text-sm tracking-widest uppercase text-gold-dark border-b border-gold-mid/40 pb-0.5 hover:border-gold-mid transition-colors"
           >
             Өөрөө баглаа бүтээх →

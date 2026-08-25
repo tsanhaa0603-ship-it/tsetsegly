@@ -93,6 +93,36 @@ export function trackPurchase({ orderId, value, items }) {
   }
 }
 
+/* ─────────────────────────────────────────────
+   Бэлгийн хуудасны тархалт
+
+   /gift/:id хаягийг хэмжилтэд ХЭЗЭЭ Ч илгээхгүй — хувийн захидал,
+   зураг агуулдаг. Зөвхөн үйлдэл тоологдоно, ямар бэлэг болох нь
+   мэдэгдэхгүй. Ингэснээр тархалтын гогцоог хэмжиж чадна:
+
+     gift_opened → gift_shared → gift_cta_click → begin_build
+─────────────────────────────────────────── */
+
+/* Хүлээн авагч бэлгээ нээсэн */
+export function trackGiftOpened() {
+  if (hasGtag()) window.gtag('event', 'gift_opened')
+  if (hasFbq()) window.fbq('trackCustom', 'GiftOpened')
+}
+
+/* Хүлээн авагч хуудсаа хуваалцсан — үнэгүй хүрээний гол хэмжүүр.
+   method: 'native' (утасны хуваалцах цэс) эсвэл 'copy' */
+export function trackGiftShared(method) {
+  if (hasGtag()) window.gtag('event', 'share', { method, content_type: 'gift_page' })
+  if (hasFbq()) window.fbq('trackCustom', 'GiftShared', { method })
+}
+
+/* Бэлгийн хуудаснаас «өөрөө бүтээх» рүү шилжсэн — гогцоо хаагдаж
+   шинэ хэрэглэгч болж эхлэв */
+export function trackGiftCtaClick() {
+  if (hasGtag()) window.gtag('event', 'gift_cta_click')
+  if (hasFbq()) window.fbq('trackCustom', 'GiftCtaClick')
+}
+
 /* Захиалгын мөрүүдийг GA4-ийн items хэлбэрт хөрвүүлнэ */
 export function toItems(flowers) {
   return (flowers || []).map((f) => ({

@@ -8,6 +8,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/gift/(.*)", "destination": "/gift/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
