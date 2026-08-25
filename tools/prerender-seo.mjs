@@ -35,10 +35,12 @@ const SITE = 'https://tsetsegly.mn'
 
      GSC_VERIFICATION  Search Console-ийн баталгаажуулалтын код
      GA4_ID            Google Analytics 4 (G-XXXXXXXXXX)
-     META_PIXEL_ID     Meta Pixel ID (15–16 оронтой тоо) */
+     META_PIXEL_ID     Meta Pixel ID (15–16 оронтой тоо)
+     META_DOMAIN_VERIFICATION  Meta domain verification-ийн content утга */
 const GSC = process.env.GSC_VERIFICATION || ''
 const GA4 = process.env.GA4_ID || ''
 const PIXEL = process.env.META_PIXEL_ID || ''
+const META_DV = process.env.META_DOMAIN_VERIFICATION || ''
 
 /* ── Байгууллагын мэдээлэл — GBP, /contact-тэй яг таарах ёстой ── */
 const BIZ = {
@@ -330,6 +332,7 @@ function stripInjected(html) {
     .replace(/[ \t]*<script type="application\/ld\+json">[\s\S]*?<\/script>\n?/g, '')
     .replace(/[ \t]*<style>\s*\.prerender[\s\S]*?<\/style>\n?/g, '')
     .replace(/[ \t]*<meta name="google-site-verification"[^>]*>\n?/g, '')
+    .replace(/[ \t]*<meta name="facebook-domain-verification"[^>]*>\n?/g, '')
     .replace(/[ \t]*<script async src="https:\/\/www\.googletagmanager\.com[^"]*"><\/script>\n?/g, '')
     .replace(/[ \t]*<script>\n?\s*window\.dataLayer[\s\S]*?<\/script>\n?/g, '')
     .replace(/[ \t]*<script>\n?\s*!function\(f,b,e,v,n,t,s\)[\s\S]*?<\/script>\n?/g, '')
@@ -435,6 +438,12 @@ function buildPage(base, route, ctx) {
 
   if (GSC) {
     head += `  <meta name="google-site-verification" content="${GSC}" />\n`
+  }
+
+  /* Meta domain verification. Тагийг статик <head>-д суулгах ёстой —
+     JavaScript-ээр динамикаар нэмбэл Facebook олдоггүй. */
+  if (META_DV) {
+    head += `  <meta name="facebook-domain-verification" content="${escAttr(META_DV)}" />\n`
   }
 
   if (GA4) {
@@ -599,5 +608,8 @@ console.log(`  JSON-LD Florist схем       ✓ бүх хуудсанд`)
 console.log(`  Search Console баталгаа    ${GSC ? '✓ суулгав' : '— GSC_VERIFICATION тохируулаагүй'}`)
 console.log(`  Google Analytics 4         ${GA4 ? '✓ ' + GA4 : '— GA4_ID тохируулаагүй'}`)
 console.log(`  Meta Pixel                 ${PIXEL ? '✓ ' + PIXEL : '— META_PIXEL_ID тохируулаагүй'}`)
+console.log(
+  `  Meta домэйн баталгаа       ${META_DV ? '✓ суулгав' : '— META_DOMAIN_VERIFICATION тохируулаагүй'}`
+)
 
 console.log('\n✓ Бэлэн. Дараагийн алхам — Search Console дээр sitemap илгээх.\n')
