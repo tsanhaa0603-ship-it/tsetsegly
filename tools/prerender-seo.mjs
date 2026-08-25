@@ -538,10 +538,40 @@ if (apiNote) console.log(`\n  ⚠ Бүтээгдэхүүний хуудас ал
         `<p><a href="/">Tsetsegly — захиалгат цэцгийн дэлгүүр</a></p></div></div>`
     )
 
+  /* GA4 — тархалтын гогцоог хэмжихэд заавал хэрэгтэй.
+     Хуваалцсан холбоосыг шууд нээхэд энэ хуудас ачаалагддаг тул
+     gtag байхгүй бол gift_opened, gift_shared огт бүртгэгдэхгүй.
+
+     ЧУХАЛ: page_location-ыг «/gift/» болгож дарж бичнэ. Эс тэгвээс
+     gtag тухайн хуудасны бүтэн хаягийг үйлдэл бүрд хавсаргаж,
+     бэлгийн id нь GA4 руу урсана.
+
+     Meta Pixel-ийг энд ЗОРИУДААР суулгахгүй — fbq баримтын хаягийг
+     автоматаар илгээдэг бөгөөд түүнийг дарж бичих найдвартай арга
+     байхгүй. Гогцоог GA4-ээр хэмжинэ. */
+  if (GA4) {
+    const cfg =
+      `  <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4}"></script>\n` +
+      `  <script>\n` +
+      `    window.dataLayer = window.dataLayer || [];\n` +
+      `    function gtag(){dataLayer.push(arguments);}\n` +
+      `    gtag('js', new Date());\n` +
+      `    gtag('config', '${GA4}', {\n` +
+      `      send_page_view: false,\n` +
+      `      page_location: '${SITE}/gift/',\n` +
+      `      page_path: '/gift/',\n` +
+      `      page_title: 'Бэлгийн хуудас'\n` +
+      `    });\n` +
+      `  </script>\n`
+    html = html.replace('</head>', cfg + '  </head>')
+  }
+
   const out = join(DIST, 'gift/index.html')
   mkdirSync(dirname(out), { recursive: true })
   writeFileSync(out, html, 'utf8')
-  console.log(`  /gift/*                      → dist/gift/index.html (noindex, хуваалцах карт)`)
+  console.log(
+    `  /gift/*                      → dist/gift/index.html (noindex${GA4 ? ', GA4 хаяггүйгээр' : ''})`
+  )
 }
 
 /* ── sitemap.xml — маршрутын жагсаалттай ижил эх сурвалжаас ── */
