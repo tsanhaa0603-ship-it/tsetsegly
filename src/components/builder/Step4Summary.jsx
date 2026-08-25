@@ -6,6 +6,7 @@ import { saveGift, giftUrl } from '../../lib/giftStore'
 import { createOrder, buildOrderPayload } from '../../lib/api'
 import { flattenCatalog, calcTotal } from '../../lib/flowers'
 import { calcDeliveryFee, findZone, findSlot, formatDate } from '../../lib/delivery'
+import { trackBeginCheckout, trackPurchase, toItems } from '../../lib/analytics'
 import QpayModal from './QpayModal'
 
 function fmt(n) {
@@ -70,6 +71,7 @@ export default function Step4Summary({ order, catalog, wrappings, shapes, onChan
       // Backend-д шууд хадгална
       const { id } = await createOrder(buildOrderPayload(fullOrder, catalog))
       setGiftId(id)
+      trackBeginCheckout({ value: grandTotal, items: toItems(selectedFlowers) })
       // Захиалга үүссэн — QPay төлбөрийн цонх нээнэ
       setShowQpay(true)
     } catch {
@@ -99,6 +101,7 @@ export default function Step4Summary({ order, catalog, wrappings, shapes, onChan
     setShowQpay(false)
     setPaid(true)
     setSubmitted(true)
+    trackPurchase({ orderId: giftId, value: grandTotal, items: toItems(selectedFlowers) })
   }
 
   async function copyLink() {

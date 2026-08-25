@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import WizardNav from './WizardNav'
 import { variantKey, flattenCatalog, calcTotal } from '../../lib/flowers'
+import { trackBeginBuild } from '../../lib/analytics'
 
 function fmt(n) {
   return '₮' + Number(n).toLocaleString('mn-MN')
@@ -205,7 +206,11 @@ export default function Step1Flowers({ catalog, selected, onChange, onNext }) {
         </div>
       )}
 
-      <WizardNav onNext={onNext} nextDisabled={totalSelected === 0} nextLabel="Боолт сонгох →" />
+      <WizardNav
+        onNext={() => { trackBeginBuild(); onNext() }}
+        nextDisabled={totalSelected === 0}
+        nextLabel="Боолт сонгох →"
+      />
     </div>
   )
 }

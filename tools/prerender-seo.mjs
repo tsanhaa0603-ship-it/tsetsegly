@@ -20,6 +20,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { SEO_ROUTES } from '../src/lib/seoRoutes.js'
 import { DEFAULT_CATALOG } from '../src/lib/flowers.js'
 import { DEFAULT_WRAPPINGS } from '../src/lib/wrappings.js'
 import { DEFAULT_SHAPES } from '../src/lib/shapes.js'
@@ -33,9 +34,11 @@ const SITE = 'https://tsetsegly.mn'
    Vercel дээр Project Settings → Environment Variables хэсэгт нэмнэ.
 
      GSC_VERIFICATION  Search Console-ийн баталгаажуулалтын код
-     GA4_ID            Google Analytics 4 (G-XXXXXXXXXX) */
+     GA4_ID            Google Analytics 4 (G-XXXXXXXXXX)
+     META_PIXEL_ID     Meta Pixel ID (15–16 оронтой тоо) */
 const GSC = process.env.GSC_VERIFICATION || ''
 const GA4 = process.env.GA4_ID || ''
+const PIXEL = process.env.META_PIXEL_ID || ''
 
 /* ── Байгууллагын мэдээлэл — GBP, /contact-тэй яг таарах ёстой ── */
 const BIZ = {
@@ -52,56 +55,8 @@ const BIZ = {
   ],
 }
 
-/* ── Маршрут бүрийн meta ──
-   title 60 тэмдэгт орчим, description 150–160 тэмдэгт орчим байвал
-   Google хайлтын үр дүнд тасрахгүй бүтнээр харагдана. */
-const ROUTES = [
-  {
-    path: '/',
-    file: 'index.html',
-    priority: '1.0',
-    changefreq: 'weekly',
-    title: 'Tsetsegly — Захиалгат цэцгийн дэлгүүр | Цэцэг хүргэлт Улаанбаатар',
-    description:
-      'Цэцэг, боолт, хэлбэрээ өөрөө сонгож баглаагаа зохионо. Улаанбаатар даяар хүргэлт ₮10,000, ₮150,000-аас дээш захиалгад үнэгүй. Утас 8844-4310.',
-  },
-  {
-    path: '/ready',
-    file: 'ready/index.html',
-    priority: '0.9',
-    changefreq: 'weekly',
-    title: 'Бэлэн цэцгийн баглаа — үнэ, зураг | Tsetsegly',
-    description:
-      'Гар хийцийн бэлэн баглаанууд: сарнай, башир, лили, барын чих. Сонгоод шууд захиалаарай. Улаанбаатарт ижил өдөртөө хүргэнэ.',
-  },
-  {
-    path: '/build',
-    file: 'build/index.html',
-    priority: '0.9',
-    changefreq: 'weekly',
-    title: 'Цэцгийн баглаа өөрөө зохиох | Tsetsegly',
-    description:
-      '15 төрлийн цэцэг, 25 боолтын цаас, 6 хэлбэрээс сонгож өөрийн баглаагаа зохионо. QR-аар нээгддэг хувийн захидлын хуудас дагалдана.',
-  },
-  {
-    path: '/about',
-    file: 'about/index.html',
-    priority: '0.7',
-    changefreq: 'monthly',
-    title: 'Бидний тухай | Tsetsegly захиалгат цэцгийн дэлгүүр',
-    description:
-      'Tsetsegly бол Улаанбаатарын захиалгат цэцгийн дэлгүүр. Баглаа бүрийг захиалга ирсний дараа гараар бэлтгэдэг — тавиур дээр зогссон баглаа байхгүй.',
-  },
-  {
-    path: '/contact',
-    file: 'contact/index.html',
-    priority: '0.6',
-    changefreq: 'monthly',
-    title: 'Холбоо барих, хүргэлтийн бүс | Tsetsegly',
-    description:
-      'Утас 8844-4310, ажлын цаг 10:00–20:00. Улаанбаатарын 6 дүүрэгт хүргэнэ, төлбөр ₮10,000. Салбар дэлгүүргүй — зөвхөн хүргэлт.',
-  },
-]
+/* Маршрут бүрийн meta — src/lib/seoRoutes.js-ээс (нэг эх сурвалж) */
+const ROUTES = SEO_ROUTES
 
 /* ── JSON-LD: Florist схем ──
    Гудамжны хаяг байхгүй (салбар дэлгүүргүй), оронд нь areaServed. */
@@ -377,6 +332,8 @@ function stripInjected(html) {
     .replace(/[ \t]*<meta name="google-site-verification"[^>]*>\n?/g, '')
     .replace(/[ \t]*<script async src="https:\/\/www\.googletagmanager\.com[^"]*"><\/script>\n?/g, '')
     .replace(/[ \t]*<script>\n?\s*window\.dataLayer[\s\S]*?<\/script>\n?/g, '')
+    .replace(/[ \t]*<script>\n?\s*!function\(f,b,e,v,n,t,s\)[\s\S]*?<\/script>\n?/g, '')
+    .replace(/[ \t]*<noscript><img height="1" width="1"[\s\S]*?<\/noscript>\n?/g, '')
 }
 
 /* index.html доторх нэг meta-г солино */
@@ -481,14 +438,31 @@ function buildPage(base, route, ctx) {
   }
 
   if (GA4) {
+    /* send_page_view: false — SPA учир хуудас солигдоход React өөрөө
+       илгээнэ (src/lib/analytics.js). Эс тэгвээс эхний хуудас давхардана. */
     head +=
       `  <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4}"></script>\n` +
       `  <script>\n` +
       `    window.dataLayer = window.dataLayer || [];\n` +
       `    function gtag(){dataLayer.push(arguments);}\n` +
       `    gtag('js', new Date());\n` +
-      `    gtag('config', '${GA4}');\n` +
+      `    gtag('config', '${GA4}', { send_page_view: false });\n` +
       `  </script>\n`
+  }
+
+  if (PIXEL) {
+    /* Meta Pixel. PageView-г мөн React илгээнэ (SPA). */
+    head +=
+      `  <script>\n` +
+      `    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?\n` +
+      `    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;\n` +
+      `    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;\n` +
+      `    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,\n` +
+      `    document,'script','https://connect.facebook.net/en_US/fbevents.js');\n` +
+      `    fbq('init', '${PIXEL}');\n` +
+      `  </script>\n` +
+      `  <noscript><img height="1" width="1" style="display:none" alt=""\n` +
+      `    src="https://www.facebook.com/tr?id=${PIXEL}&ev=PageView&noscript=1" /></noscript>\n`
   }
 
   html = html.replace('</head>', head + '  </head>')
@@ -554,5 +528,6 @@ console.log(`  Бүтээгдэхүүний хуудас      ${bouquets.length 
 console.log(`  JSON-LD Florist схем       ✓ бүх хуудсанд`)
 console.log(`  Search Console баталгаа    ${GSC ? '✓ суулгав' : '— GSC_VERIFICATION тохируулаагүй'}`)
 console.log(`  Google Analytics 4         ${GA4 ? '✓ ' + GA4 : '— GA4_ID тохируулаагүй'}`)
+console.log(`  Meta Pixel                 ${PIXEL ? '✓ ' + PIXEL : '— META_PIXEL_ID тохируулаагүй'}`)
 
 console.log('\n✓ Бэлэн. Дараагийн алхам — Search Console дээр sitemap илгээх.\n')

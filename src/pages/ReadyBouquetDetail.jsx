@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { fetchReadyBouquet, fetchReadyBouquets } from '../lib/api'
 import { CITY_DELIVERY_FEE, FREE_DELIVERY_MIN, LAST_SAME_DAY_HOUR } from '../lib/delivery'
+import { trackViewItem, trackPageView } from '../lib/analytics'
 import { flattenCatalog } from '../lib/flowers'
 import { DEFAULT_CATALOG } from '../lib/flowers'
 import { DEFAULT_WRAPPINGS } from '../lib/wrappings'
@@ -36,7 +37,13 @@ export default function ReadyBouquetDetail() {
   useEffect(() => {
     if (!bouquet) return
     const prev = document.title
-    document.title = `${bouquet.name} — ${fmt(bouquet.price)} | Tsetsegly`
+    const title = `${bouquet.name} — ${fmt(bouquet.price)} | Tsetsegly`
+    document.title = title
+
+    /* Гарчиг тодорсны дараа илгээнэ — ScrollToTop энэ маршрутыг алгасдаг */
+    trackPageView(`/ready/${bouquet.slug}`, title)
+    trackViewItem({ id: bouquet.slug, name: bouquet.name, price: bouquet.price })
+
     return () => { document.title = prev }
   }, [bouquet])
 
