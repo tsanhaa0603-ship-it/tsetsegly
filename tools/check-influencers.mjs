@@ -18,7 +18,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 
 const IG_APP_ID = '936619743392459'
 
-/* Instagram нэрээ нууцлан хандахыг хааж эхэлбэл (HTTP 401) өөрийн
+/* Instagram нэрээ нууцлан хандахыг хааж эхэлбэл (HTTP 401/403/429) өөрийн
    session-оор хандана. Терминалдаа зөвхөн энэ удаагийн ажиллагаанд:
 
      PowerShell:  $env:IG_SESSIONID = "..."
@@ -164,10 +164,13 @@ for (const r of rows) {
 writeFileSync('influencers.csv', '﻿' + csv.join('\n'), 'utf8')
 
 const ok = rows.filter((r) => verdict(r).mark === '✓').length
-const blocked = rows.filter((r) => r.error === 'HTTP 401').length
+/* Instagram нэвтрээгүй хандалтыг 401, 403, 429 гурван кодоор хаадаг.
+   Гурвуулаа «өгөгдөл аваагүй», шийдэл нь ижил — session-оор дахин ханд. */
+const BLOCKED = new Set(['HTTP 401', 'HTTP 403', 'HTTP 429'])
+const blocked = rows.filter((r) => BLOCKED.has(r.error)).length
 
 if (blocked === rows.length && rows.length > 0 && !SESSION_ID) {
-  console.log('\n⚠ Instagram нэрээ нууцлан хандахыг хаалаа (401).')
+  console.log('\n⚠ Instagram нэрээ нууцлан хандахыг хаалаа (401/403/429).')
   console.log('  Өөрийн session-оор дахин оролдоно уу:')
   console.log('    PowerShell:  $env:IG_SESSIONID = "<sessionid>"')
   console.log('    bash:        export IG_SESSIONID="<sessionid>"')
@@ -175,7 +178,9 @@ if (blocked === rows.length && rows.length > 0 && !SESSION_ID) {
   process.exit(1)
 }
 if (blocked === rows.length && rows.length > 0 && SESSION_ID) {
-  console.log('\n⚠ Session-оор ч 401 буцлаа. Түлхүүр хуучирсан байж магадгүй — дахин хуулна уу.\n')
+  console.log('\n⚠ Session-оор ч хаагдлаа. Түлхүүр хуучирсан байж магадгүй — дахин хуулна уу.')
+  console.log('  Мөн VPN, ажлын сүлжээ, үүлэн сервер дээрээс ажиллуулбал Instagram')
+  console.log('  сүлжээгээр нь шууд хаадаг — гэрийн интернетээсээ оролдоно уу.\n')
   process.exit(1)
 }
 
