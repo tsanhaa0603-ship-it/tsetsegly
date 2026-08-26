@@ -337,10 +337,15 @@ export async function buildStoryVideo(opts = {}) {
   const { onProgress } = opts
   const { draw, total } = await createRenderer(opts)
 
+  // Утсан дээр хөнгөн байлгахын тулд нягтралыг бууруулна.
+  // Зурах координат 1080×1920 хэвээр — canvas-ыг л жижигрүүлж scale хийнэ.
+  const small = typeof window !== 'undefined' && window.innerWidth < 500
+  const scale = small ? 720 / W : 1
   const canvas = document.createElement('canvas')
-  canvas.width = W
-  canvas.height = H
+  canvas.width = Math.round(W * scale)
+  canvas.height = Math.round(H * scale)
   const ctx = canvas.getContext('2d')
+  ctx.scale(scale, scale)
 
   const mimeType = pickMimeType()
   if (!mimeType) throw new Error('MediaRecorder дэмжихгүй')
@@ -348,7 +353,10 @@ export async function buildStoryVideo(opts = {}) {
 
   const stream = canvas.captureStream(FPS)
   const chunks = []
-  const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 6000000 })
+  const recorder = new MediaRecorder(stream, {
+    mimeType,
+    videoBitsPerSecond: small ? 3500000 : 6000000,
+  })
   recorder.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data) }
 
   const done = new Promise((resolve) => {
@@ -361,9 +369,12 @@ export async function buildStoryVideo(opts = {}) {
 
   const start = performance.now()
   await new Promise((resolve) => {
+    // Хамгаалалт: дэлгэц унтрах/апп солигдоход rAF зогсдог тул
+    // тодорхой хугацааны дараа заавал дуусгана.
+    const guard = setTimeout(resolve, (total + 8) * 1000)
     function frame() {
       const t = (performance.now() - start) / 1000
-      if (t >= total) return resolve()
+      if (t >= total) { clearTimeout(guard); return resolve() }
       draw(ctx, t)
       if (onProgress) onProgress(clamp(t / total))
       requestAnimationFrame(frame)
