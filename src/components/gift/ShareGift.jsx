@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { trackGiftShared } from '../../lib/analytics'
 import { buildStoryImage, blobToFile } from '../../lib/storyImage'
+import { buildStoryVideo, videoToFile, canRecordVideo } from '../../lib/storyVideo'
 
 /* ─────────────────────────────────────────────
    Бэлгийн хуудсыг хуваалцах
@@ -11,16 +12,20 @@ import { buildStoryImage, blobToFile } from '../../lib/storyImage'
 
    ЧУХАЛ: Facebook, Instagram-ын Story нь ЗӨВХӨН зураг/бичлэг
    хүлээж авдаг — холбоос хүлээж авдаггүй. Тиймээс Story-д
-   хуваалцахын тулд navigator.share-т ЗУРАГ дамжуулна.
+   хуваалцахын тулд navigator.share-т ФАЙЛ дамжуулна.
    Тэгж байж хуваалцах цэсэнд "Story" сонголт гарч ирдэг.
 
-   Хувийн нууц: зурган дээр захидлын текст, хувийн зураг
-   ОРУУЛАХГҮЙ — зөвхөн мэдэгдэл, нэр, брэнд харагдана.
+   Story дээр мэндчилгээний бүх зүйл (захидал, зураг, баглаа)
+   эрэмблэн урсдаг бичлэг үүснэ. Бичлэг дэмжихгүй хөтөч дээр
+   энгийн зураг руу шилжинэ.
 ───────────────────────────────────────────── */
-export default function ShareGift({ senderName, recipientName }) {
+export default function ShareGift({
+  senderName, recipientName, letterText, photos, flowers, shapeName, wrapName,
+}) {
   const [copied, setCopied] = useState(false)
   const [failed, setFailed] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [progress, setProgress] = useState(0)
   const [note, setNote] = useState('')
 
   const url = typeof window !== 'undefined' ? window.location.href : ''
@@ -69,43 +74,75 @@ export default function ShareGift({ senderName, recipientName }) {
     }
   }
 
-  /* Story-д хуваалцах — зураг үүсгээд файлаар дамжуулна */
+  /* Story-д хуваалцах — мэндчилгээний бүх зүйл урсдаг бичлэг үүсгэнэ.
+     Бичлэг боломжгүй хөтөч дээр зураг руу шилжинэ. */
   async function shareStory() {
     setBusy(true)
     setNote('')
+    setProgress(0)
+    const host = typeof window !== 'undefined' ? window.location.host : 'tsetsegly.mn'
+
     try {
-      const blob = await buildStoryImage({
-        recipientName,
-        senderName,
-        siteUrl: typeof window !== 'undefined' ? window.location.host : 'tsetsegly.mn',
-      })
-      if (!blob) throw new Error('no blob')
-      const file = blobToFile(blob)
+      let file, kind
+
+      if (canRecordVideo()) {
+        setNote('Бичлэг бэлдэж байна… (~15 сек)')
+        const { blob, ext } = await buildStoryVideo({
+          recipientName, senderName, letterText, photos, flowers,
+          shapeName, wrapName, siteUrl: host,
+          onProgress: setProgress,
+        })
+        if (!blob || !blob.size) throw new Error('empty video')
+        file = videoToFile(blob, ext)
+        kind = 'video'
+      } else {
+        const blob = await buildStoryImage({ recipientName, senderName, siteUrl: host })
+        if (!blob) throw new Error('no blob')
+        file = blobToFile(blob)
+        kind = 'image'
+      }
 
       // Хөтөч файл хуваалцахыг дэмжиж байвал системийн цэс нээнэ
       if (canShareFiles && navigator.canShare({ files: [file] })) {
         await navigator.share({ files: [file], text: shareText })
-        trackGiftShared('story')
+        trackGiftShared(kind === 'video' ? 'story_video' : 'story')
         setNote('Хуваалцах цэснээс Instagram эсвэл Facebook → Story сонгоно уу.')
         return
       }
 
-      // Дэмжихгүй бол зургийг татаж өгнө — гараар Story-доо тавина
-      downloadBlob(blob)
-      trackGiftShared('story_download')
-      setNote('Зураг татагдлаа — Story-доо оруулаад хуваалцаарай.')
+      // Дэмжихгүй бол татаж өгнө — гараар Story-доо тавина
+      downloadFile(file)
+      trackGiftShared(kind === 'video' ? 'story_video_download' : 'story_download')
+      setNote(kind === 'video'
+        ? 'Бичлэг татагдлаа — Story-доо оруулаад хуваалцаарай.'
+        : 'Зураг татагдлаа — Story-доо оруулаад хуваалцаарай.')
     } catch (e) {
       if (e?.name === 'AbortError') return   // хэрэглэгч цуцалсан
-      setNote('Зураг үүсгэж чадсангүй. Холбоосыг хуулж хуваалцана уу.')
+      // Бичлэг бүтэлгүйтвэл зургаар оролдоно
+      try {
+        const blob = await buildStoryImage({ recipientName, senderName, siteUrl: host })
+        const f = blobToFile(blob)
+        if (canShareFiles && navigator.canShare({ files: [f] })) {
+          await navigator.share({ files: [f], text: shareText })
+          trackGiftShared('story')
+          setNote('Хуваалцах цэснээс Instagram эсвэл Facebook → Story сонгоно уу.')
+        } else {
+          downloadFile(f)
+          setNote('Зураг татагдлаа — Story-доо оруулаад хуваалцаарай.')
+        }
+      } catch {
+        setNote('Үүсгэж чадсангүй. Холбоосыг хуулж хуваалцана уу.')
+      }
     } finally {
       setBusy(false)
+      setProgress(0)
     }
   }
 
-  function downloadBlob(blob) {
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = 'tsetsegly-beleg.png'
+  function downloadFile(fileOrBlob) {
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(fileOrBlob)
+    a.download = fileOrBlob.name || "tsetsegly-beleg.png"
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -131,9 +168,18 @@ export default function ShareGift({ senderName, recipientName }) {
               style={{ background: 'linear-gradient(135deg, #8A6E2F, #C9A961, #F4EBD3)' }}
             />
           )}
+          {/* Явцын заалт — бичлэг бэлдэх хугацаанд */}
+          {busy && progress > 0 && (
+            <span
+              className="absolute inset-y-0 left-0 transition-all duration-150"
+              style={{ width: `${Math.round(progress * 100)}%`, background: 'rgba(255,255,255,0.35)' }}
+            />
+          )}
           <span className="relative text-ink font-medium flex items-center justify-center gap-2">
-            <span aria-hidden="true">📸</span>
-            {busy ? 'Зураг бэлдэж байна…' : 'Story-д хуваалцах'}
+            <span aria-hidden="true">🎬</span>
+            {busy
+              ? `Бичлэг бэлдэж байна… ${progress > 0 ? Math.round(progress * 100) + '%' : ''}`
+              : 'Story-д хуваалцах'}
           </span>
         </button>
 
@@ -163,7 +209,7 @@ export default function ShareGift({ senderName, recipientName }) {
           ? 'Хуулж чадсангүй — хаягийн мөрөөс гараар хуулна уу.'
           : note
             ? note
-            : 'Story-д зураг тавигдана — захидал тань нууц хэвээр. Холбоосыг нээсэн хүн захидал, зургийг тань харна.'}
+            : 'Story-д захидал, зураг, баглаа урсаж харагдана. Холбоосыг нээсэн хүн бүх зүйлийг тань харна.'}
       </p>
     </div>
   )

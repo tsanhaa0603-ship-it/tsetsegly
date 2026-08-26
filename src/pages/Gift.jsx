@@ -287,7 +287,15 @@ export default function Gift() {
         <div className="pt-6 reveal" style={{ animationDelay: '0.9s' }}>
           <div className="w-10 h-px mx-auto mb-5"
             style={{ background: 'linear-gradient(90deg, transparent, #C9A961, transparent)' }} />
-          <ShareGift senderName={data.senderName} recipientName={data.recipientName} />
+          <ShareGift
+            senderName={data.senderName}
+            recipientName={data.recipientName}
+            letterText={data.letterText}
+            photos={photos}
+            flowers={flowerList}
+            shapeName={shapeItem?.name}
+            wrapName={wrapItem?.name}
+          />
         </div>
 
         {/* Footer */}
