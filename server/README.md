@@ -42,6 +42,26 @@ URL (жишээ нь `https://tsetsegly-api.vercel.app`) болгож солин
 | `ADMIN_USERNAME` | Admin нэвтрэх нэр (default `admin`) |
 | `ADMIN_PASSWORD` | Admin нууц үг (заавал тохируулна) |
 
+### Шинэ захиалгын мэдэгдэл (заавал биш)
+
+Шинэ захиалга үүсэх болон QPay төлбөр баталгаажих үед Telegram ба/эсвэл
+имэйлээр мэдэгдэл явна. Тохируулаагүй сувгийг алгасна.
+
+| Хувьсагч | Тайлбар |
+|----------|---------|
+| `TELEGRAM_BOT_TOKEN` | @BotFather-аас авсан ботын token |
+| `TELEGRAM_CHAT_ID` | Мэдэгдэл очих chat id (таслалаар олныг) |
+| `RESEND_API_KEY` | resend.com-ийн API key |
+| `NOTIFY_EMAIL_TO` | Мэдэгдэл хүлээн авах имэйл (таслалаар олныг) |
+| `NOTIFY_EMAIL_FROM` | Илгээгч — Resend-д баталгаажсан домэйнтой хаяг |
+
+**Telegram тохируулах:** @BotFather → `/newbot` → token хуулна. Ботдоо (эсвэл
+ботыг нэмсэн group-д) нэг мессеж бичээд
+`https://api.telegram.org/bot<TOKEN>/getUpdates` нээж `chat.id`-г олно.
+
+**Имэйл тохируулах:** resend.com-д бүртгүүлж API key үүсгэнэ. Домэйн
+баталгаажуулаагүй үед зөвхөн Resend бүртгэлийн имэйл рүүгээ илгээж чадна.
+
 ### MongoDB Atlas үнэгүй setup
 1. https://www.mongodb.com/cloud/atlas/register дээр бүртгүүлнэ
 2. Free (M0) cluster үүсгэнэ

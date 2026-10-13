@@ -8,8 +8,21 @@
 import { Router } from 'express'
 import Order from '../models/Order.js'
 import { createInvoice, checkPayment } from '../services/qpay.js'
+import { notifyOrderPaid } from '../services/notify.js'
 
 const router = Router()
+
+/* Төлбөрийг атомаар 'paid' болгоно — callback болон polling зэрэг ирсэн ч
+   зөвхөн нэг нь шинэчилж, мэдэгдэл ганц удаа явна. Шинэчилсэн бол захиалгыг буцаана. */
+async function markPaid(orderId, paidAmount) {
+  const order = await Order.findOneAndUpdate(
+    { _id: orderId, paymentStatus: { $ne: 'paid' } },
+    { paymentStatus: 'paid', paidAmount, paidAt: new Date() },
+    { new: true }
+  ).select('-photos')
+  if (order) await notifyOrderPaid(order)
+  return order
+}
 
 /* ─── POST /api/qpay/invoice ───
    Body: { orderId }
@@ -75,10 +88,7 @@ router.post('/callback', async (req, res) => {
     // ЗААВАЛ QPay-аас баталгаажуулна
     const { paid, paidAmount } = await checkPayment(order.qpayInvoiceId)
     if (paid) {
-      order.paymentStatus = 'paid'
-      order.paidAmount = paidAmount
-      order.paidAt = new Date()
-      await order.save()
+      await markPaid(order._id, paidAmount)
       console.log('✅ Төлбөр баталгаажлаа:', orderId, paidAmount, '₮')
     } else {
       console.warn('QPay callback ирсэн ч төлбөр баталгаажаагүй:', orderId)
@@ -108,10 +118,10 @@ router.get('/status/:orderId', async (req, res) => {
       try {
         const { paid, paidAmount } = await checkPayment(order.qpayInvoiceId)
         if (paid) {
+          await markPaid(order._id, paidAmount)
           order.paymentStatus = 'paid'
           order.paidAmount = paidAmount
           order.paidAt = new Date()
-          await order.save()
           console.log('✅ Төлбөр polling-оор баталгаажлаа:', order._id)
         }
       } catch (e) {
