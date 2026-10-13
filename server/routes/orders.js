@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import Order from '../models/Order.js'
 import auth from '../middleware/auth.js'
+import { notifyNewOrder } from '../services/notify.js'
 
 const router = Router()
 const STATUS_FLOW = ['new', 'preparing', 'ready', 'delivered']
@@ -43,6 +44,7 @@ router.post('/', async (req, res) => {
       customerPhone: b.customerPhone,
       status: 'new',
     })
+    await notifyNewOrder(order)
     res.status(201).json({ id: order._id, status: order.status, createdAt: order.createdAt })
   } catch (e) {
     console.error('POST /orders:', e.message)
